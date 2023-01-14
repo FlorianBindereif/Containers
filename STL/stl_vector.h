@@ -150,7 +150,7 @@ class vector : protected Vector_base<Tp, Alloc>
     { }
 
     /**
-     * @brief Create a %vector with copies of an exemplar element.
+     * @br`ief Create a %vector with copies of an exemplar element.
      * @param n The number of elements to initially create.
      * @param value An element to copy.
      * 
@@ -745,7 +745,7 @@ class vector : protected Vector_base<Tp, Alloc>
      * @param x A %vector of the same element and allocator types.
      * 
      * This exchages the elements between two vectors in constant time.
-     * (Three pointers, so it should be quite fast.)
+     * (Three pointers, so it should be quite fast.swap)
      * Note that the global std::swap() function is specialized such that
      * std::swap(v1,v2) will feed to this function.
      */
