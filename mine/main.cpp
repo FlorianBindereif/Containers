@@ -10,4 +10,9 @@ int main(void)
 
 	std::cout << "original " << original[100] << std::endl;
 	// std::cout << "mine " << mine.size() << std::endl;
+
+	
+	int i =  5;
+
+	std::allocator<int>::pointer pointer =  &i;
 }
