@@ -35,16 +35,15 @@ struct iterator_traits<const T*> {
     // typedef random_access_iterator_tag iterator_category;
 };
 
-/* Converts iterator that is not a class, e.g. a pointer, into an iterator that is a class.
- @Container exists so that different containers using this template can instantiate different types, 
- even if the Iterator parameter is the same.*/
-template <typename Iterator, typename Container>
-class normal_iterator
+/* Reverse iterator that iterates through a container in the reverse order. 
+ That is, it starts at the last element of the container and moves towards the first element.*/
+template <typename Iterator>
+class reverse_iterator
 {
 	protected:
 		Iterator current_;
 
-  public:
+	public:
     // TYPEDEFS
     typedef Iterator                                                    iterator_type;
     typedef typename ft::iterator_traits<Iterator>::value_type          value_type;
