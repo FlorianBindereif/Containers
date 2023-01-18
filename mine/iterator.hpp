@@ -61,7 +61,7 @@ class normal_iterator
     : current_(Iterator()){};
 
     /*constructor takes object of the Iterator type and initializes with the passed Iterator object.*/
-    normal_iterator(const Iterator& iter)
+    explicit normal_iterator(const Iterator& iter)
     :current_(iter){};
 
     /*constructor that allows iterator to const_iterator conversion*/
