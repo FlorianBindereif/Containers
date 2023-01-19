@@ -2,8 +2,8 @@
 
 #include "mynullptr.hpp"
 #include "iterator.hpp"
+#include "algorithm.hpp"
 #include <memory>
-#include <algorithm>
 #include <exception>
 
 namespace ft
@@ -14,7 +14,6 @@ namespace ft
 		private:
 			// TYPEDEFS
 			typedef vector<T, Alloc>                           vector_type;
-
 
 		public:
 			// TYPEDEFS
@@ -45,6 +44,40 @@ namespace ft
 					construct_(n);
 				}
 			}
+
+			/*constructor builds vector consisting of copies of the elements from [@first, last) */
+			template <typename InputIterator>
+			vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+			{
+
+			}
+
+			//PUBLIC MEMBER FUNCTIONS
+
+			/* Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.*/
+			void assign (size_type n, const T& value)
+			{
+				if (n <= capacity())
+				{
+					ft::fill_n(start_, ft::min(size(), n), value);
+					if (n > size())
+						construct_(n - size(), value);
+					else
+						destroy_(start_ + n);
+				}
+				else
+				{
+					vector tmp(n, value)
+					(*this).swap(tmp);
+				}
+			}
+
+			template <typename InputIterator>
+			void assign (InputIterator first, InputIterator last)
+			{
+				
+			}
+
 
 			//ELEMENT ACCESS
 
@@ -91,6 +124,7 @@ namespace ft
 			/*Returns pointer to the underlying array serving as element storage.*/
 			pointer data()
 			{return start_;}
+
 			/*Returns a read-only pointer to the underlying array serving as element storage.*/
 			const_pointer data() const
 			{return start_;}
@@ -109,7 +143,7 @@ namespace ft
 
 			/*Returns the maximum number of elements the container is able to hold due to system or library limitations*/
 			size_type max_size() const
-			{return std::min<size_type>(alloc_.max_size(), std::numeric_limits<difference_type>::max());}
+			{return ft::min<size_type>(alloc_.max_size(), std::numeric_limits<difference_type>::max());}
 
 			/*Returns the number of elements that the container has currently allocated space for. */
 			size_type capacity() const
@@ -126,6 +160,17 @@ namespace ft
 				}
 			}
 
+			// MODIFIERS
+
+			/*Exchanges the contents and capacity of the container with those of other. */
+			void swap(vector& other)
+			{
+				ft:swap(start_, other.start_);
+				ft:swap(finish_, other.finish_);
+				ft:swap(finish_of_storage_, other.finish_of_storage_);
+				ft:swap(alloc_, other.alloc_);
+			}
+
 			private:
 
 			//PRIVATE MEMBER FUNCTIONS
@@ -139,15 +184,15 @@ namespace ft
 				finish_of_storage_ = start_ + n;
 			}
 
-			/*Initializes @n objects of objec-type @value_type*/
-			inline void construct_(size_type n)
+			/*Initializes @n objects of objec-type @val*/
+			inline void construct_(size_type n, val = value_type())
 			{
 				for (size_type i = 0; i < n; ++i, ++finish_)
-					alloc_.construct(finish_, value_type());
+					alloc_.construct(finish_, val);
 			}
 
 			/*Calls the destructor of every object in storage up to @new_end starting from @_finish*/
-			inline void destroy(pointer new_end)
+			inline void destroy_(pointer new_end)
 			{
 				for (; finish_ != new_end;)
 					alloc_.destroy(--finish_);
@@ -158,7 +203,7 @@ namespace ft
 			{
 				if (start_ != mynullptr)
 				{
-					destroy(start_);
+					destroy_(start_);
 					alloc_.deallocate(start_, capacity());
 					start_ = finish_ = finish_of_storage_ = mynullptr;
 				}
