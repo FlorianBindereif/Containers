@@ -24,9 +24,12 @@ namespace ft
 	{typedef T type; };
 
 	//Integer types
+
+	/* Base template for integer_type checking*/
 	template<typename T>
 	struct is_integer : public false_type {};
 
+	/* Specialisation templates for integer_type checking*/
 	template<>
 	struct is_integer <bool>: public true_type {};
 

@@ -4,7 +4,7 @@ namespace ft
 	void fill(ForwardIterator first, ForwardIterator last, const T& value)
 	{
 		for (; first != last; ++first)
-			*first = val;
+			*first = value;
 	}
 
 	template <typename OutputIterator, typename Size, typename T>
@@ -12,11 +12,8 @@ namespace ft
 	{
 		if (count > 0)
 		{
-			for (int filled = 0; filled < count, ++filled)
-			{
-				*filled = val;
-				++first;
-			}
+			for (int filled = 0; filled < count; ++filled, ++first)
+			{ *first = value;}
 		}
 	}
 

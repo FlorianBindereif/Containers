@@ -1,8 +1,19 @@
 #pragma once
 
+#include <iterator>
 #include "type_traits.hpp"
 
-namespace ft{
+
+namespace ft
+{
+/*Iterator category tags carry information that can be used to select the most efficient algorithms
+ for the specific requirement set that is implied by the category. */
+typedef std::output_iterator_tag        output_iterator_tag;
+typedef std::input_iterator_tag         input_iterator_tag;
+typedef std::forward_iterator_tag       forward_iterator_tag;
+typedef std::bidirectional_iterator_tag bidirectional_iterator_tag;
+typedef std::random_access_iterator_tag random_access_iterator_tag;
+
 
 /*Primary template struct for interator_traits is used to obtain information about the properties of an iterator*/
 template <typename Iter>
@@ -13,7 +24,6 @@ struct iterator_traits {
     typedef typename Iter::reference         reference;
     typedef typename Iter::iterator_category iterator_category;
 };
-
 
 /*Specialization of iterator_traits for pointer types*/
 template <typename T>
@@ -34,6 +44,11 @@ struct iterator_traits<const T*> {
     typedef const T&                   reference;
     // typedef random_access_iterator_tag iterator_category;
 };
+
+/* helper function that used to determine the category of an iterator passed as an argument.*/
+template <typename Iter>
+inline typename iterator_traits<Iter>::iterator_category iterator_category(const Iter&)
+{ return typename iterator_traits<Iter>::iterator_category();}
 
 /* Converts iterator that is not a class, e.g. a pointer, into an iterator that is a class.
  @Container exists so that different containers using this template can instantiate different types, 
@@ -343,7 +358,7 @@ inline bool operator>=
   { return reverse_iterator<Iterator>(iter.base() - n);}
 
 
-/*Allows for mixed iterator/const_iterator parameters*/
+// Mixed iterator/const_iterator parameter
 
   template <typename IteratorL, typename IteratorR>
   inline bool operator==(
@@ -386,4 +401,30 @@ inline bool operator>=
       const reverse_iterator<IteratorL>& lhs,
       const reverse_iterator<IteratorR>& rhs)
   { return rhs.base() - lhs.base();}
+
+  // Distance functions to determine number of elements in a container for iterator_types
+
+  template <typename InputIterator>
+  inline typename ft::iterator_traits<InputIterator>::difference_type iterator_distance(
+      InputIterator first,
+      InputIterator last,
+      input_iterator_tag)
+  {
+    typename ft::iterator_traits<InputIterator>::difference_type distance = 0;
+    for (;first !=  last; ++first, ++distance){};
+    return distance;
+  }
+
+  template <typename RandomAccessIterator>
+  inline typename ft::iterator_traits<RandomAccessIterator>::difference_type iterator_distance(
+      RandomAccessIterator first,
+      RandomAccessIterator last,
+      random_access_iterator_tag)
+  { return last - first;}
+
+  template <typename Iterator>
+  inline typename ft::iterator_traits<Iterator>::difference_type distance(
+      Iterator first,
+      Iterator last)
+  { return iterator_distance(first, last, ft::iterator_traits<Iterator>::iterator_category());}
 }

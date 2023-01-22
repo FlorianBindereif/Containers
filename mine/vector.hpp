@@ -13,7 +13,7 @@ namespace ft
 	{
 		private:
 			// TYPEDEFS
-			typedef vector<T, Alloc>                           vector_type;
+			typedef vector<T, Alloc>                           	vector_type;
 
 		public:
 			// TYPEDEFS
@@ -35,7 +35,10 @@ namespace ft
 			{ };
 
 			/*Constructors that fills the vector with @n copies of @value*/
-			explicit vector(size_type n, const value_type& value = value_type(), const allocator_type& alloc = allocator_type())
+			explicit vector(
+				size_type n, 
+				const value_type& value = value_type(), 
+				const allocator_type& alloc = allocator_type())
 			:alloc_(alloc), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
 			{
 				if (n > 0)
@@ -47,9 +50,19 @@ namespace ft
 
 			/*constructor builds vector consisting of copies of the elements from [@first, last) */
 			template <typename InputIterator>
-			vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
-			{
+			vector(
+				InputIterator first, 
+				typename ft::enable_if<!ft::is_integer<InputIterator>::equality, InputIterator>::type last, 
+				const allocator_type& alloc = allocator_type())
+			:alloc_(alloc), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
+			{ assign(first, last);}
 
+			/*Copy constructor. Constructs the container with the copy of the contents of other*/
+			vector(const vector& other)
+			:alloc_(other.get_allocator()), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
+			{
+				allocate_(other.size());
+				construct_(other.start_, other.finish_);
 			}
 
 			//PUBLIC MEMBER FUNCTIONS
@@ -67,17 +80,27 @@ namespace ft
 				}
 				else
 				{
-					vector tmp(n, value)
+					vector tmp(n, value);
 					(*this).swap(tmp);
 				}
 			}
 
 			template <typename InputIterator>
-			void assign (InputIterator first, InputIterator last)
+			void assign (InputIterator first, typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type* last)
 			{
-				
+				// first get difference type and then do it like the assign type above. -> needs distance type;
+				clear();
+				difference_type range = last - first;
+				if (range > capacity())
+				{
+					
+				}
+				for (; first != last; ++first)
+					push_back(*first);
 			}
 
+			allocator_type get_allocator() const
+			{ return alloc_;}
 
 			//ELEMENT ACCESS
 
@@ -157,18 +180,32 @@ namespace ft
 					throw std::length_error("vector");
 				if (new_cap > capacity())
 				{
+					vector new_vect(alloc_);
+					new_vect.allocate_(new_cap);
+					new_vect.construct_(start_, finish_);
+					swap(new_vect);
 				}
 			}
 
 			// MODIFIERS
 
-			/*Exchanges the contents and capacity of the container with those of other. */
+			void clear()
+			{ destroy_(start_);}
+
+			void push_back(const value_type& value)
+			{
+				if (finish_ == finish_of_storage_)
+					reserve(recommend_size_(capacity() + 1));
+				construct_(1, value);
+			}
+
+			/*Exchanges the contents and capacity of the container with those of other.*/
 			void swap(vector& other)
 			{
-				ft:swap(start_, other.start_);
-				ft:swap(finish_, other.finish_);
-				ft:swap(finish_of_storage_, other.finish_of_storage_);
-				ft:swap(alloc_, other.alloc_);
+				ft::swap(start_, other.start_);
+				ft::swap(finish_, other.finish_);
+				ft::swap(finish_of_storage_, other.finish_of_storage_);
+				ft::swap(alloc_, other.alloc_);
 			}
 
 			private:
@@ -185,10 +222,17 @@ namespace ft
 			}
 
 			/*Initializes @n objects of objec-type @val*/
-			inline void construct_(size_type n, val = value_type())
+			inline void construct_(size_type n, const_reference val = value_type())
 			{
 				for (size_type i = 0; i < n; ++i, ++finish_)
 					alloc_.construct(finish_, val);
+			}
+
+			template <typename ForwardIterator>
+			inline void construct_(ForwardIterator first, ForwardIterator last)
+			{
+				for (; first != last; ++first, ++finish_)
+					construct_(finish_, *first);
 			}
 
 			/*Calls the destructor of every object in storage up to @new_end starting from @_finish*/
@@ -207,6 +251,18 @@ namespace ft
 					alloc_.deallocate(start_, capacity());
 					start_ = finish_ = finish_of_storage_ = mynullptr;
 				}
+			}
+
+			/* returns the new size to allocate when current capacity is exceeded*/ 
+			size_type get_new_size_(size_type new_size) const
+			{
+				const size_type max(max_size());
+				if (new_size > max)
+					throw std::length_error("vector");
+				const size_type cap(capacity());
+				if (new_size <= cap)
+					return new_size;
+				return ft::min(ft::max(cap * 2, new_size), max);
 			}
 
 		private:
