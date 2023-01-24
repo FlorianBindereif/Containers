@@ -46,9 +46,9 @@ struct iterator_traits<const T*> {
 };
 
 /* helper function that used to determine the category of an iterator passed as an argument.*/
-template <typename Iter>
-inline typename iterator_traits<Iter>::iterator_category iterator_category(const Iter&)
-{ return typename iterator_traits<Iter>::iterator_category();}
+template <typename Iterator>
+inline typename iterator_traits<Iterator>::iterator_category iterator_category(const Iterator&)
+{ return typename iterator_traits<Iterator>::iterator_category();}
 
 /* Converts iterator that is not a class, e.g. a pointer, into an iterator that is a class.
  @Container exists so that different containers using this template can instantiate different types, 
@@ -73,21 +73,21 @@ class normal_iterator
 
     /*constructor initialising with @Iterator type*/
 		normal_iterator()
-    : current_(Iterator()){};
+    : current_(Iterator()){}
 
     /*constructor takes object of the Iterator type and initializes with the passed Iterator object.*/
     explicit normal_iterator(const Iterator& iter)
-    :current_(iter){};
+    :current_(iter){}
 
     /*constructor that allows iterator to const_iterator conversion*/
     template <typename Iter>
     normal_iterator(const normal_iterator<
       Iter, typename ft::enable_if<
         (ft::are_same<Iter, typename Container::pointer>::equality), Container>::type>& it)
-    :current_(it.base()) {};
+    :current_(it.base()) {}
 
     /*default destructor*/
-    ~normal_iterator(){};
+    ~normal_iterator(){}
   
     // FORWARD ITERATOR REQUIREMRNTS
 
@@ -128,7 +128,7 @@ class normal_iterator
     // RANDOM ACCESS ITERATOR REQUIREMENTS
 
     reference operator[](const difference_type& n) const
-    {return this[n];};
+    {return this[n];}
 
     normal_iterator operator+(const difference_type& n) const
     { return normal_iterator(current_ + n);}
@@ -227,15 +227,15 @@ class reverse_iterator
 
     /*default constructor default initializes @current. If it is a pointer it is zero-initialized*/
 		reverse_iterator()
-    : current_(){};
+    : current_(){}
 
     /*takes iterator object and turns it in into a reverse_iterator*/
 		explicit reverse_iterator(iterator_type iter)
-    :current_(iter) {};
+    :current_(iter) {}
   
     /*copy Constructor*/
     reverse_iterator(const reverse_iterator& iter)
-    :current_(iter.current_){};
+    :current_(iter.current_){}
     
     /* constructor creates a copy of reverse_iterator with the same base type */
     template <typename Iter>
@@ -243,7 +243,7 @@ class reverse_iterator
     :current_(iter.base()) {}
 
     /*default destructor*/
-    ~reverse_iterator(){};
+    ~reverse_iterator(){}
   
     // FORWARD ITERATOR REQUIREMRNTS
 
@@ -287,7 +287,7 @@ class reverse_iterator
     // RANDOM ACCESS ITERATOR REQUIREMENTS
 
     reference operator[](const difference_type& n) const
-    { return *(*this + n);};
+    { return *(*this + n);}
 
     reverse_iterator operator+(const difference_type& n) const
     { return reverse_iterator(current_ - n);}
@@ -405,18 +405,18 @@ inline bool operator>=
   // Distance functions to determine number of elements in a container for iterator_types
 
   template <typename InputIterator>
-  inline typename ft::iterator_traits<InputIterator>::difference_type iterator_distance(
+  inline typename ft::iterator_traits<InputIterator>::difference_type iterator_distance_(
       InputIterator first,
       InputIterator last,
       input_iterator_tag)
   {
     typename ft::iterator_traits<InputIterator>::difference_type distance = 0;
-    for (;first !=  last; ++first, ++distance){};
+    for (;first !=  last; ++first, ++distance){}
     return distance;
   }
 
   template <typename RandomAccessIterator>
-  inline typename ft::iterator_traits<RandomAccessIterator>::difference_type iterator_distance(
+  inline typename ft::iterator_traits<RandomAccessIterator>::difference_type iterator_distance_(
       RandomAccessIterator first,
       RandomAccessIterator last,
       random_access_iterator_tag)
@@ -426,5 +426,5 @@ inline bool operator>=
   inline typename ft::iterator_traits<Iterator>::difference_type distance(
       Iterator first,
       Iterator last)
-  { return iterator_distance(first, last, ft::iterator_traits<Iterator>::iterator_category());}
-}
+  { return iterator_distance_(first, last, ft::iterator_category(first));}
+} 

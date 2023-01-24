@@ -40,4 +40,60 @@ namespace ft
 		first = second;
 		second = tmp;
 	}
+
+
+	template <typename InputIterator_lhs, typename InputIterator_rhs>
+	bool equal(
+		InputIterator_lhs first, 
+		InputIterator_lhs last,
+		InputIterator_rhs to_compare_first)
+	{
+		for (; first != last; ++first, ++to_compare_first)
+			if (!(*first == *to_compare_first))
+				return false;
+		return true;
+	}
+
+	template <typename InputIterator_lhs, typename InputIterator_rhs>
+	bool lexicographical_compare(
+		InputIterator_lhs first, 
+		InputIterator_lhs last,
+		InputIterator_rhs to_compare_first,
+		InputIterator_rhs to_compare_last)
+	{
+		for (; first != last && to_compare_first != to_compare_last; ++first, ++to_compare_first)
+		{
+			if (*first < *to_compare_first)
+				return true;
+			if (*to_compare_first < *first)
+				return false;
+		}
+		return first == last && to_compare_first != to_compare_last;
+	}
+
+	template <typename BidirIterator>
+	BidirIterator move_backward(BidirIterator first, BidirIterator last, BidirIterator d_last)
+	{
+		while (last != first) 
+		{
+			--last;
+			--d_last;
+			*d_last = *last;
+    	}
+    	return d_last;
+	}
+
+	template <typename InputIterator, typename OutputIterator>
+	OutputIterator copy(
+		InputIterator first, 
+		InputIterator last,
+        OutputIterator result)
+	{
+		for (; first != last; ++result, ++first)
+        	*result = *first;
+    	return result;
+    }
+}
+
+
 }
