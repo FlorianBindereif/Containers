@@ -32,7 +32,7 @@ struct iterator_traits<T*> {
     typedef std::ptrdiff_t             difference_type;
     typedef T*                         pointer;
     typedef T&                         reference;
-    // typedef random_access_iterator_tag iterator_category;
+    typedef random_access_iterator_tag iterator_category;
 };
 
 /*Specialization of iterator_traits for pointer to const types*/
@@ -42,7 +42,7 @@ struct iterator_traits<const T*> {
     typedef std::ptrdiff_t             difference_type;
     typedef const T*                   pointer;
     typedef const T&                   reference;
-    // typedef random_access_iterator_tag iterator_category;
+    typedef random_access_iterator_tag iterator_category;
 };
 
 /* helper function that used to determine the category of an iterator passed as an argument.*/
@@ -156,32 +156,32 @@ class normal_iterator
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator==
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() == rhs.base();}
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator!=
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() != rhs.base();}
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator<
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() < rhs.base();}
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator>
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() > rhs.base();}
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator>=
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() >= rhs.base();}
 
 template <typename IteratorL, typename IteratorR, typename Container>
 inline bool operator<=
-(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorL, Container>& rhs)
+(const normal_iterator<IteratorL, Container>& lhs, const normal_iterator<IteratorR, Container>& rhs)
 { return lhs.base() <= rhs.base();}
 
 // ITERATOR ARITHMETIC REQUIREMENTS
@@ -244,12 +244,19 @@ class reverse_iterator
 
     /*default destructor*/
     ~reverse_iterator(){}
-  
+
+    template <typename Iter>
+    reverse_iterator& operator=(const reverse_iterator<Iter>& other)
+    {
+        current_ = other.base();
+        return *this;
+    }
+
     // FORWARD ITERATOR REQUIREMRNTS
 
     reference operator*() const
     {
-      reverse_iterator tmp(current_);
+      iterator_type tmp = current_;
       return *(--tmp);
    }
 

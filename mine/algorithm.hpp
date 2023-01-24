@@ -12,7 +12,7 @@ namespace ft
 	{
 		if (count > 0)
 		{
-			for (int filled = 0; filled < count; ++filled, ++first)
+			for (Size filled = 0; filled < count; ++filled, ++first)
 			{ *first = value;}
 		}
 	}
@@ -41,7 +41,6 @@ namespace ft
 		second = tmp;
 	}
 
-
 	template <typename InputIterator_lhs, typename InputIterator_rhs>
 	bool equal(
 		InputIterator_lhs first, 
@@ -61,14 +60,14 @@ namespace ft
 		InputIterator_rhs to_compare_first,
 		InputIterator_rhs to_compare_last)
 	{
-		for (; first != last && to_compare_first != to_compare_last; ++first, ++to_compare_first)
+		for (; (first != last) && (to_compare_first != to_compare_last); ++first, ++to_compare_first)
 		{
 			if (*first < *to_compare_first)
 				return true;
 			if (*to_compare_first < *first)
 				return false;
 		}
-		return first == last && to_compare_first != to_compare_last;
+		return (first == last) && (to_compare_first != to_compare_last);
 	}
 
 	template <typename BidirIterator>
@@ -93,7 +92,4 @@ namespace ft
         	*result = *first;
     	return result;
     }
-}
-
-
 }

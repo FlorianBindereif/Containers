@@ -5,13 +5,13 @@ namespace ft
 	//defines of true/false type
 	struct true_type
 	{
-		static const bool equality = true;
+		static const bool value = true;
 		typedef true_type type;
 	};
 
 	struct false_type
 	{
-		static const bool equality = false;
+		static const bool value = false;
 		typedef false_type type;
 	};
 
@@ -54,7 +54,7 @@ namespace ft
 	template<>
 	struct is_integer <unsigned long int>: public true_type {};
 	
-	// Comparison of equality of types
+	// Comparison of value of types
 	template <typename, typename>
 	struct are_same: public false_type {};
 

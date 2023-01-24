@@ -56,7 +56,7 @@ namespace ft
 			template <typename InputIterator>
 			vector(
 				InputIterator first, 
-				typename ft::enable_if<!ft::is_integer<InputIterator>::equality, InputIterator>::type last, 
+				typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last, 
 				const allocator_type& alloc = allocator_type())
 			:alloc_(alloc), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
 			{ assign(first, last);}
@@ -66,7 +66,7 @@ namespace ft
 			:alloc_(other.get_allocator()), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
 			{
 				allocate_(other.size());
-				construct_(other.start_, other.finish_);
+				construct_(other.start_, other.finish_, ft::iterator_category(other.start_));
 			}
 
 			/***********************************************
@@ -100,7 +100,7 @@ namespace ft
 
 			/*Replaces the contents with copies of those in the range [first, last), and modifying its size accordingly.*/
 			template <typename InputIterator>
-			void assign (InputIterator first, typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type* last)
+			void assign (InputIterator first, typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last)
 			{ assign_in_range_(first, last, ft::iterator_category(first));}
 
 			/*Returns the allocator associated with the container. */
@@ -156,11 +156,11 @@ namespace ft
 
 			/*Returns a read/write reference to the data at the last element of the vector*/
 			reference back()
-			{return *finish_ - 1;}
+			{return *(finish_ - 1);}
 
 			/*Returns a read-only reference to the data at the last element of the vector*/
 			const_reference back() const
-			{return *finish_ - 1;}
+			{return *(finish_ - 1);}
 
 			/*Returns pointer to the underlying array serving as element storage.*/
 			pointer data()
@@ -224,7 +224,7 @@ namespace ft
 				{
 					vector new_vect(alloc_);
 					new_vect.allocate_(get_new_size_(new_cap));
-					new_vect.construct_(start_, finish_);
+					new_vect.construct_(start_, finish_, ft::iterator_category(finish_));
 					swap(new_vect);
 				}
 			}
@@ -243,7 +243,7 @@ namespace ft
 
 			/*Inserts elements at the specified location in the container. Inserts @value before @pos.*/
 			iterator insert(const iterator pos, const value_type& value)
-			{ return insert(position, 1, val);}
+			{ return insert(pos, 1, value);}
 
 			/*Inserts elements at the specified location in the container. Inserts @count copies of the @value before @pos.*/
 			iterator insert(const iterator pos, size_type count, const value_type& value)
@@ -269,9 +269,7 @@ namespace ft
 				 InputIterator first, 
 				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type* last )
 			{
-				(void) pos;
-				(void) first;
-				(void) last;
+				
 			}
 
 			/*Removes the element at pos*/
@@ -284,10 +282,14 @@ namespace ft
 			}
 
 			/*Removes the elements in the range [first, last)*/
-			iterator erase( iterator first, iterator last)
+			iterator erase(iterator first, iterator last)
 			{
-				(void)first;
-				(void)last;
+				if (first != last) 
+				{
+					pointer p = start_ + (first - begin());
+					destroy_(ft::copy(p + (last - first), start_, p));
+				}
+				return first;
 			}
 			
 			/*Appends the given element value to the end of the container. The new element is initialized as a copy of value.*/
@@ -319,10 +321,10 @@ namespace ft
 			/*Exchanges the contents and capacity of the container with those of other.*/
 			void swap(vector& other)
 			{
-				ft::swap(start_, other.start_);
-				ft::swap(finish_, other.finish_);
-				ft::swap(finish_of_storage_, other.finish_of_storage_);
-				ft::swap(alloc_, other.alloc_);
+				std::swap(start_, other.start_);
+				std::swap(alloc_, other.alloc_);
+				std::swap(finish_, other.finish_);
+				std::swap(finish_of_storage_, other.finish_of_storage_);
 			}
 
 
@@ -347,12 +349,11 @@ namespace ft
 					alloc_.construct(finish_, val);
 			}
 
-			
 			template <typename ForwardIterator>
 			inline void construct_(ForwardIterator first, ForwardIterator last, forward_iterator_tag)
 			{
 				for (; first != last; ++first, ++finish_)
-					construct_(finish_, *first);
+					alloc_.construct(finish_, *first);
 			}
 
 			/*Calls the destructor of every object in storage up to @new_end starting from @_finish*/
@@ -425,7 +426,7 @@ namespace ft
 /*Checks if the contents of lhs and rhs are equal*/
 template <typename T, class Allocator >
 inline bool operator==(const vector <T, Allocator>& lhs, const vector<T, Allocator>& rhs)
-{ return lhs.size() == rhs.size() &&  ft::equal(lhs.begin, lhs.end(). rhs.begin());}
+{ return lhs.size() == rhs.size() &&  ft::equal(lhs.begin(), lhs.end(), rhs.begin());}
 
 /*Checks if the contents of lhs and rhs are not equal*/
 template <typename T, class Allocator >
