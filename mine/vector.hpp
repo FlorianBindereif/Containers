@@ -267,7 +267,7 @@ namespace ft
 			iterator insert(
 				 const_iterator pos, 
 				 InputIterator first, 
-				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type* last )
+				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last )
 			{
 				
 			}
@@ -287,7 +287,7 @@ namespace ft
 				if (first != last) 
 				{
 					pointer p = start_ + (first - begin());
-					destroy_(ft::copy(p + (last - first), start_, p));
+					destroy_(ft::copy(p + (last - first), finish_, p));
 				}
 				return first;
 			}

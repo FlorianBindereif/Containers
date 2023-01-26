@@ -6,6 +6,7 @@
 
 namespace ft
 {
+
 /*Iterator category tags carry information that can be used to select the most efficient algorithms
  for the specific requirement set that is implied by the category. */
 typedef std::output_iterator_tag        output_iterator_tag;
@@ -73,17 +74,17 @@ class normal_iterator
 
     /*constructor initialising with @Iterator type*/
 		normal_iterator()
-    : current_(Iterator()){}
+    : current_(iterator_type()){}
 
     /*constructor takes object of the Iterator type and initializes with the passed Iterator object.*/
-    explicit normal_iterator(const Iterator& iter)
+    explicit normal_iterator(const iterator_type& iter)
     :current_(iter){}
 
     /*constructor that allows iterator to const_iterator conversion*/
     template <typename Iter>
     normal_iterator(const normal_iterator<
       Iter, typename ft::enable_if<
-        (ft::are_same<Iter, typename Container::pointer>::equality), Container>::type>& it)
+        ft::are_same<Iter, typename Container::pointer>::value, Container>::type>& it)
     :current_(it.base()) {}
 
     /*default destructor*/
@@ -95,7 +96,7 @@ class normal_iterator
     {return *current_;}
 
     pointer operator->() const
-    {return current_;}
+    {return &(operator*());}
 
     normal_iterator& operator++()
     {
@@ -128,7 +129,7 @@ class normal_iterator
     // RANDOM ACCESS ITERATOR REQUIREMENTS
 
     reference operator[](const difference_type& n) const
-    {return this[n];}
+    {return current_[n];}
 
     normal_iterator operator+(const difference_type& n) const
     { return normal_iterator(current_ + n);}
@@ -318,37 +319,6 @@ class reverse_iterator
     { return current_;}
 };
 
-// ITERATOR COMPARISON REQUIREMENTS
-
-template <typename Iterator>
-inline bool operator==
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return lhs.base() == rhs.base();}
-
-template <typename Iterator>
-inline bool operator!=
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return lhs.base() != rhs.base();}
-
-template <typename Iterator>
-inline bool operator<
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return lhs.base() > rhs.base();}
-
-template <typename Iterator>
-inline bool operator>
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return lhs.base() < rhs.base();}
-
-template <typename Iterator>
-inline bool operator<=
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return rhs.base() >= lhs.base();}
-
-template <typename Iterator>
-inline bool operator>=
-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{ return lhs.base() <= rhs.base();}
 
 // ITERATOR ARITHMETIC REQUIREMENTS
 

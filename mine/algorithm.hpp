@@ -70,16 +70,29 @@ namespace ft
 		return (first == last) && (to_compare_first != to_compare_last);
 	}
 
-	template <typename BidirIterator>
-	BidirIterator move_backward(BidirIterator first, BidirIterator last, BidirIterator d_last)
+	// template <typename BidirIterator>
+	// BidirIterator move_backward(BidirIterator first, BidirIterator last, BidirIterator d_last)
+	// {
+	// 	while (last != first) 
+	// 	{
+	// 		--last;
+	// 		--d_last;
+	// 		*d_last = *last;
+    // 	}
+    // 	return d_last;
+	// }
+
+	template <typename BidirIterator1, typename BidirIterator2>
+	BidirIterator2 move_backward(BidirIterator1 first, BidirIterator1 last,
+                             BidirIterator2 result_last)
 	{
 		while (last != first) 
 		{
 			--last;
-			--d_last;
-			*d_last = *last;
-    	}
-    	return d_last;
+			--result_last;
+			*last = *result_last;
+		}
+		return result_last;
 	}
 
 	template <typename InputIterator, typename OutputIterator>

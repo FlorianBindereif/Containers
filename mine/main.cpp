@@ -33,19 +33,41 @@ void vec_print(const T& vec __attribute__((unused)))
 
 int main(void)
 {
-	INTVEC ivec;
-    INTVEC ivec_cpy(ivec);
+	// INTVEC ivec;
+    // INTVEC ivec_cpy(ivec);
+    // vec_print(ivec);
+    // vec_print(ivec_cpy);
+	// INTVEC ivec2(10, 42);
+    // INTVEC ivec2_cpy(ivec2);
+    // vec_print(ivec2);
+    // vec_print(ivec2_cpy);
+    // std::vector<int> std_vec(100, 42);
+    // INTVEC           ivec3(std_vec.begin(), std_vec.end());
+    // INTVEC           ivec3_cpy(ivec2);
+    // vec_print(ivec3);
+    // vec_print(ivec3_cpy);
+
+    // INTVEC ivec;
+    // ivec.insert(ivec.begin(), 2);
+    // ivec.insert(ivec.begin(), 1);
+    // ivec.insert(ivec.end(), 3);
+    // vec_print(ivec);
+    // ivec.insert(ivec.begin() + 1, 3, 42);
+    // vec_print(ivec);
+
+    INTVEC ivec;
+    ivec.resize(10, 10);
     vec_print(ivec);
-    vec_print(ivec_cpy);
-	INTVEC ivec2(10, 42);
-    INTVEC ivec2_cpy(ivec2);
+    ivec.resize(5, 5);
+    vec_print(ivec);
+    ivec.resize(100, 100);
+    vec_print(ivec);
+
+    INTVEC ivec2(ivec);
+    ivec2.resize(10, 10);
     vec_print(ivec2);
-    vec_print(ivec2_cpy);
-    std::vector<int> std_vec(100, 42);
-    INTVEC           ivec3(std_vec.begin(), std_vec.end());
-    INTVEC           ivec3_cpy(ivec2);
-    vec_print(ivec3);
-    vec_print(ivec3_cpy);
+    ivec2.resize(0, 10);
+    vec_print(ivec2);
 }
 
 			
