@@ -242,34 +242,79 @@ namespace ft
 			{ destroy_(start_);}
 
 			/*Inserts elements at the specified location in the container. Inserts @value before @pos.*/
-			iterator insert(const iterator pos, const value_type& value)
+			iterator insert(iterator pos, const value_type& value)
 			{ return insert(pos, 1, value);}
 
 			/*Inserts elements at the specified location in the container. Inserts @count copies of the @value before @pos.*/
-			iterator insert(const iterator pos, size_type count, const value_type& value)
+			iterator insert(iterator pos, size_type count, const value_type& value)
 			{
-				if (count > 0)
+				if (count == 0) return pos;
+				if (capacity() >= (count + size())) 
 				{
-					size_type old_size = size();
-					iterator last = end() - 1;
-					iterator position = begin() + (pos - begin());
-					resize(old_size + count);
-					ft::move_backward(position, last, last + count);
-					ft::fill_n(position, count, value);
-					return position;
-				}
-				else
+					if (end() - pos > count) 
+					{
+						ft::copy(end() - count, end(), end());
+						ft::copy_backward(pos, end() - count, end());
+						ft::fill_n(pos, count, value);
+					} 
+					else 
+					{
+						ft::copy(pos, end(), pos + count);
+						ft::fill_n(pos, count, value);
+					}
+					finish_ += count;
 					return pos;
+				}
+				else 
+				{
+					difference_type offset = ft::distance(begin(), pos);
+					reserve(get_new_size_(size() + count));
+					iterator new_pos = begin() + offset;
+					ft::copy_backward(new_pos, end(), end() + count);
+					ft::fill_n(new_pos, count, value);
+					finish_ = finish_ + count;
+					return new_pos;
+				}
 			}
 
 			/*Inserts elements at the specified location in the container. Inserts elements from range [@first, @last) before @pos.*/
 			template <typename InputIterator>
 			iterator insert(
-				 const_iterator pos, 
+				 iterator pos, 
 				 InputIterator first, 
 				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last )
 			{
-				
+
+				if (first == last) return pos;
+				difference_type count = ft::distance(first, last);
+				if (capacity() >=  size() + count)
+				{
+					if (end() - pos > count) 
+					{
+						ft::copy(end() - count, end(), end());
+						ft::copy_backward(pos, end() - count, end());
+						ft::copy(first, last, pos);
+					} 
+					else 
+					{
+						ft::copy(pos, end(), pos + count);
+						ft::copy(first, last, end());
+					}
+					finish_ += count;
+					return pos;
+				} 
+				else 
+				{
+					difference_type offset = ft::distance(begin(), pos);
+					reserve(get_new_size_(size() + count));
+					iterator new_pos = begin() + offset;
+					ft::copy_backward(new_pos, end(), end() + count);
+					// std::cout << "size: " << size() << " count: " << count << " capacity: " << capacity() << std::endl;
+					std::copy(first, last, new_pos);
+					// std::cout << "check" << std::endl;
+					finish_ = finish_ + count;
+					return new_pos;
+				}
 			}
 
 			/*Removes the element at pos*/
