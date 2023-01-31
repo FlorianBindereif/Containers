@@ -243,79 +243,33 @@ namespace ft
 
 			/*Inserts elements at the specified location in the container. Inserts @value before @pos.*/
 			iterator insert(iterator pos, const value_type& value)
-			{ return insert(pos, 1, value);}
+			{
+				difference_type offset = pos - begin();
+				insert(pos, 1, value);
+				return begin() + offset;
+			// { return insert(pos, 1, value);}
+			}
 
 			/*Inserts elements at the specified location in the container. Inserts @count copies of the @value before @pos.*/
-			iterator insert(iterator pos, size_type count, const value_type& value)
+			void insert(iterator pos, size_type count, const value_type& value)
 			{
-				if (count == 0) return pos;
-				if (capacity() >= (count + size())) 
+				if (count > 0) 
 				{
-					if (end() - pos > count) 
-					{
-						ft::copy(end() - count, end(), end());
-						ft::copy_backward(pos, end() - count, end());
-						ft::fill_n(pos, count, value);
-					} 
-					else 
-					{
-						ft::copy(pos, end(), pos + count);
-						ft::fill_n(pos, count, value);
-					}
-					finish_ += count;
-					return pos;
-				}
-				else 
-				{
-					difference_type offset = ft::distance(begin(), pos);
-					reserve(get_new_size_(size() + count));
-					iterator new_pos = begin() + offset;
-					ft::copy_backward(new_pos, end(), end() + count);
-					ft::fill_n(new_pos, count, value);
-					finish_ = finish_ + count;
-					return new_pos;
-				}
+					const difference_type offset = pos - begin();
+					const size_type       old_size = size();
+					resize(old_size + count);
+					ft::copy_backward(start_ + offset, start_ + old_size, start_ + old_size + count);
+					ft::fill_n(start_ + offset, count, value);
+        		}
 			}
-
+			
 			/*Inserts elements at the specified location in the container. Inserts elements from range [@first, @last) before @pos.*/
-			template <typename InputIterator>
-			iterator insert(
-				 iterator pos, 
+		    template <class InputIterator>
+			void insert(
+				 iterator position, 
 				 InputIterator first, 
-				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last )
-			{
-
-				if (first == last) return pos;
-				difference_type count = ft::distance(first, last);
-				if (capacity() >=  size() + count)
-				{
-					if (end() - pos > count) 
-					{
-						ft::copy(end() - count, end(), end());
-						ft::copy_backward(pos, end() - count, end());
-						ft::copy(first, last, pos);
-					} 
-					else 
-					{
-						ft::copy(pos, end(), pos + count);
-						ft::copy(first, last, end());
-					}
-					finish_ += count;
-					return pos;
-				} 
-				else 
-				{
-					difference_type offset = ft::distance(begin(), pos);
-					reserve(get_new_size_(size() + count));
-					iterator new_pos = begin() + offset;
-					ft::copy_backward(new_pos, end(), end() + count);
-					// std::cout << "size: " << size() << " count: " << count << " capacity: " << capacity() << std::endl;
-					std::copy(first, last, new_pos);
-					// std::cout << "check" << std::endl;
-					finish_ = finish_ + count;
-					return new_pos;
-				}
-			}
+				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last)
+			{ insert_range_(position, first, last, ft::iterator_category(first));}
 
 			/*Removes the element at pos*/
 			iterator erase(iterator pos)
@@ -348,7 +302,6 @@ namespace ft
 			/*Removes the last element of the container.*/
 			void pop_back()
 			{ destroy_(finish_ - 1);}
-
 
 			/*Resizes the container to contain count elements.*/
 			void resize(size_type count, value_type value = value_type())
@@ -445,7 +398,7 @@ namespace ft
 					push_back(*first);
 			}
 
-			/* returns the new size to allocate when current capacity is exceeded*/ 
+			/* Returns the new size to allocate when current capacity is exceeded*/ 
 			size_type get_new_size_(size_type new_size) const
 			{
 				const size_type max(max_size());
@@ -455,6 +408,43 @@ namespace ft
 				if (new_size <= cap)
 					return new_size;
 				return ft::min(ft::max(cap * 2, new_size), max);
+			}
+
+			template <class ForwardIterator>
+			void insert_range_(
+				iterator position, 
+				ForwardIterator first, 
+				ForwardIterator last,
+				ft::forward_iterator_tag)
+			{
+				size_type n = static_cast<size_type>(ft::distance(first, last));
+				if (n > 0) 
+				{
+					const difference_type offset = position - begin();
+					const size_type       old_size = size();
+					resize(old_size + n);
+					ft::copy_backward(start_ + offset, start_ + old_size, start_ + old_size + n);
+					ft::copy(first, last, start_ + offset);
+				}
+			}
+
+			template <typename InputIterator>
+			void insert_range_(
+				iterator pos, 
+				InputIterator first, 
+				InputIterator last,
+				ft::input_iterator_tag)
+			{
+				if (pos == end()) 
+				{
+					for (; first != last; ++first)
+						push_back(*first);
+				} 
+				else if (first != last) 
+				{
+					vector tmp(first, last);
+					insert(pos, tmp.begin(), tmp.end());
+				}
 			}
 
 		private:
