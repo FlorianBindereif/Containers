@@ -135,5 +135,4 @@ namespace ft
 	template< typename T, typename Container >
 	inline bool operator>=(const stack<T, Container>& lhs, const stack<T,Container>& rhs)
 	{return lhs.container_ >= rhs.container_;};
-
 }
