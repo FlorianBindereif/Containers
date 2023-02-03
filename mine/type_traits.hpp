@@ -2,7 +2,10 @@
 
 namespace ft
 {
-	//defines of true/false type
+	/***********************************************
+		TRUE/FALSE TYPE
+	***********************************************/
+
 	struct true_type
 	{
 		static const bool value = true;
@@ -15,7 +18,10 @@ namespace ft
 		typedef false_type type;
 	};
 
-	//enable_if
+	/***********************************************
+		ENABLE IF
+	***********************************************/
+
 	template <bool B, typename T = void>
 	struct enable_if{};
 
@@ -23,7 +29,9 @@ namespace ft
 	struct enable_if<true, T>
 	{typedef T type; };
 
-	//Integer types
+	/***********************************************
+		INTEGER TYPES
+	***********************************************/	
 
 	/* Base template for integer_type checking*/
 	template<typename T>
@@ -54,7 +62,10 @@ namespace ft
 	template<>
 	struct is_integer <unsigned long int>: public true_type {};
 	
-	// Comparison of value of types
+	/***********************************************
+		COMPARISON OF VALUE TYPES
+	***********************************************/
+		
 	template <typename, typename>
 	struct are_same: public false_type {};
 

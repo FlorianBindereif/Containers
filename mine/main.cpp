@@ -55,19 +55,25 @@ int main(void)
     // ivec.insert(ivec.begin() + 1, 3, 42);
     // vec_print(ivec);
 
-    INTVEC ivec;
-    ivec.resize(10, 10);
-    vec_print(ivec);
-    ivec.resize(5, 5);
-    vec_print(ivec);
-    ivec.resize(100, 100);
-    vec_print(ivec);
+    // INTVEC ivec;
+    // ivec.resize(10, 10);
+    // vec_print(ivec);
+    // ivec.resize(5, 5);
+    // vec_print(ivec);
+    // ivec.resize(100, 100);
+    // vec_print(ivec);
 
-    INTVEC ivec2(ivec);
-    ivec2.resize(10, 10);
-    vec_print(ivec2);
-    ivec2.resize(0, 10);
-    vec_print(ivec2);
+    // INTVEC ivec2(ivec);
+    // ivec2.resize(10, 10);
+    // vec_print(ivec2);
+    // ivec2.resize(0, 10);
+    // vec_print(ivec2);
+    ft::vector<ft::vector<int> > v;
+
+    std::cout << v.max_size() << std::endl;
+    std::vector<std::vector<int> > f;
+
+    std::cout << f.max_size() << std::endl;
 }
 
 			

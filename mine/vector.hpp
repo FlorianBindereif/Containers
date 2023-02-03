@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mynullptr.hpp"
-#include "iterator.hpp"
+#include "vector_iterator.hpp"
 #include "algorithm.hpp"
 #include <memory>
 #include <exception>
@@ -12,7 +12,7 @@ namespace ft
 	class vector
 	{
 		private:
-			typedef vector<T, Alloc>                           	vector_type;
+			typedef vector<T, Alloc>							vector_type;
 
 		public:
 			typedef T											value_type;
