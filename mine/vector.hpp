@@ -8,6 +8,7 @@
 
 namespace ft
 {
+	/* ft::vector is a sequence container that encapsulates dynamic size arrays.*/
 	template<typename T, typename Alloc = std::allocator<T> >
 	class vector
 	{
