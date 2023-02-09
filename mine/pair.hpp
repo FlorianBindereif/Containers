@@ -19,12 +19,12 @@ namespace ft
 		/*Default constructor. Value-initializes both elements of the pair, first and second.*/
 		pair(): first(T1()), second(T2()) {}
 
-		/*Constructor that initializes @first with @x and @second with @y.*/
-		pair(const T1& x, const T2& y): first(x), second(y) {}
-
 		/*Copy Constructor initializes @first with @p.first and @second with @p.second.*/
 		template <typename U1, typename U2>
 		pair(const pair<U1, U2>& p): first(p.first), second(p.second) {}
+
+		/*Constructor that initializes @first with @x and @second with @y.*/
+		pair(const T1& x, const T2& y): first(x), second(y) {}
 
 		/***********************************************
 			DESTRUCTORS
@@ -52,7 +52,7 @@ namespace ft
 	/*Creates a pair object of type, defined by the argument types */
 	template <typename T1, typename T2>
 	pair<T1, T2> make_pair(T1 t, T2 u)
-	{ return pair<T1, T2>(t, u); }
+	{ return ft::pair<T1, T2>(t, u); }
 
 	/*Checks if the contents of lhs and rhs are equal*/
 	template <typename T1, typename T2>

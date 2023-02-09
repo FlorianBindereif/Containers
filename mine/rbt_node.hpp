@@ -5,6 +5,7 @@
 namespace ft
 {
 	enum COLOUR { RED, BLACK};
+	enum SIDE { LEFT, RIGHT};
 
 	template <typename T>
 	class Node
@@ -17,9 +18,9 @@ namespace ft
 		public:
 			value_type	value;
 			COLOUR 		colour;
-			Node*		parent;  //potentially just "pointer"
-			Node*		left;
-			Node*		right;
+			pointer		parent;
+			pointer		left;
+			pointer		right;
 
 		public:
 			/***********************************************
@@ -28,11 +29,13 @@ namespace ft
 
 			/*Default Constructor instanciating empty node*/
 			Node()
-			:value(mynullptr), colour(RED), parent(mynullptr), left(mynullptr), right(mynullptr) {}
+			:value(), colour(BLACK), parent(mynullptr), left(mynullptr), right(mynullptr) {}
 
-			/*Constructor initializing value with @value and colour with @colour*/
+			// Möglicherweise nicht notwendig//
+
+			/*Constructor initializing value with @value, colour with @colour*/
 			Node(value_type value, COLOUR colour)
-			:value(value), colour(colour), parent(mynullptr), left(mynullptr), right(mynullptr) {}
+			:value(value), colour(colour), parent(mynullptr), left(mynullptr), right(mynullptr){}
 			
 			/*Copy Constructor. Constructs the container with the copy of the contents of @other**/
 			Node(const Node& other)
