@@ -235,46 +235,38 @@ namespace ft
 				
 			ft::pair<iterator, bool> insert(const value_type& value)
 			{
-				node_pointer iter = root_node_();
+				node_pointer *iter = &root_node_();
 				node_pointer parent;
-				
-				if (iter == nullptr)
+
+				if (*iter == mynullptr)
 				{
-					parent = end_node_();
-					iter = parent->left;
+					parent = root_;
+					iter = &(root_->left);
+					std::cout << "first time"  << std::endl;
 				}
 				else
 				{
-					while (iter != nullptr)
+					std::cout << "second time"  << std::endl;
+					while (*iter != mynullptr)
 					{
-						parent = iter;
-						if (compare_(value, iter->value))
-							iter = iter->left;
-						else if (compare_(iter->value, value))
-							iter = iter->right;
+						parent = *iter;
+						if (compare_(value, (*iter)->value))
+							*iter = (*iter)->left;
+						else if (compare_((*iter)->value, value))
+							*iter = (*iter)->right;
 						else
-							return ft::make_pair(iterator(iter), false);
+							return ft::make_pair(iterator(*iter), false);
 					}
 				}
-				// node_pointer new_node = create_new_node_(value, RED);
-
-				// new_node->parent = parent;
-				// if (left_most_->left != mynullptr)
-				// 	left_most_ = left_most_->left;
-				// balance_insert(new_node);
-				// std::cout << new_node->value.first << std::endl;
-				// iter = new_node;
-				// ++node_count_;
-				// return ft::make_pair(iterator(new_node), true);
-
-				iter = create_new_node_(value, RED);
-				iter->parent = parent;
-				std::cout << iter->value.first << iter->parent->value.first << std::endl;
+				node_pointer new_node = create_new_node_(value, RED);
+				*iter = new_node;
+				(*iter)->parent = parent;
 				if (left_most_->left != mynullptr)
 					left_most_ = left_most_->left;
-				balance_insert(iter);
+				// balance_insert(new_node);
+				std::cout << (*iter)->value.first << " | " << (*iter)->parent->value.first << std::endl;
 				++node_count_;
-				return ft::make_pair(iterator(iter), true);
+				return ft::make_pair(iterator(*iter), true);
 			}
 
 			// template <typename Key>
@@ -326,5 +318,5 @@ namespace ft
 					print_from_node_(node->left, prefix + (is_first ? " " : "    "), true, false);
 				}
 			}
+		};
 	};
-}
