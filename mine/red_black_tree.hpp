@@ -104,7 +104,7 @@ namespace ft
 			{
 				node_pointer y = x->left;
 				x->left = y->right;
-				if (x->left != nullptr)
+				if (x->left != mynullptr)
 					x->left->parent = x;
 				y->parent = x->parent;
 				if (x == x->parent->left)
@@ -119,7 +119,7 @@ namespace ft
 			{
 				node_pointer y = x->right;
 				x->right = y->left;
-				if (x->right != nullptr)
+				if (x->right != mynullptr)
 					x->right->parent = x;
 				y->parent = x->parent;
 				if (x == x->parent->left)
@@ -133,11 +133,7 @@ namespace ft
 			
 			void balance_insert(node_pointer node)
 			{
-				if (node == root_node_())
-					node->colour  = BLACK;
-				else
-					node->colour = RED;
-				while(node != root_node_() && node->parent->colour == RED)
+				while(node != root_->left && node->parent->colour == RED)
 				{
 					if(node->parent->parent->left == node->parent)
 					{
@@ -145,13 +141,9 @@ namespace ft
 						if (uncle != mynullptr && uncle->colour == RED)
 						{
 							uncle->colour = BLACK;
-							node = node->parent;
-							node->colour = BLACK;
-							node = node->parent; // könnte parent->parent sein
-							if (node == root_node_())
-								node->colour  = BLACK;
-							else
-								node->colour = RED;
+							node->parent->colour = BLACK;
+							node->parent->parent->colour = RED;
+							node = node->parent->parent;
 						}
 						else
 						{
@@ -172,13 +164,9 @@ namespace ft
 						if (uncle != mynullptr && uncle->colour == RED)
 						{
 							uncle->colour = BLACK;
-							node = node->parent;
-							node->colour = BLACK;
-							node = node->parent;
-							if (node == root_node_())
-								node->colour  = BLACK;
-							else
-								node->colour = RED;
+							node->parent->colour = BLACK;
+							node->parent->parent->colour = RED;
+							node = node->parent->parent;
 						}
 						else
 						{
@@ -190,9 +178,10 @@ namespace ft
 							node->parent->colour = BLACK;
 							node->parent->parent->colour = RED;
 							rotate_left_(node->parent->parent);
-								break;
+							break;
 						}
 					}
+					root_->left->colour = BLACK;
 				}
 			}
 			
@@ -203,7 +192,10 @@ namespace ft
 
 				node_pointer new_node = create_new_node_(value, RED);
 				if (iter == mynullptr)
+				{
 					root_->left = new_node;
+					new_node->colour = BLACK;
+				}
 				else
 				{
 					while (iter != mynullptr)
