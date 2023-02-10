@@ -100,43 +100,6 @@ namespace ft
 
 			bool empty() const { return node_count_ == 0 ;}
 
-
-			// template <typename Key>
-			// node_pointer find_key_or_pos_(node_pointer& parent, const Key& key)
-			// {
-			// 	node_pointer iter = root_node_()
-			// 	if (iter == mynullptr)
-			// 		parent = end_node_();
-			// 	else
-			// 	{
-			// 		if (compare_(key, iter->val))
-			// 		{
-			// 			if (iter->left == mynullptr)
-			// 			{
-			// 				parent = iter;
-			// 				return parent->left;
-			// 			}
-			// 			else
-			// 				iter = iter->left;
-			// 		}
-			// 		else if (compare_(iter->val, key))
-			// 		{
-			// 			if (iter->right == mynullptr)
-			// 			{
-			// 				parent = iter;
-			// 				return parent->right;
-			// 			}
-			// 			else
-			// 				iter = iter->right;
-			// 		}
-			// 		else
-			// 		{
-			// 			parent = iter;
-			// 			return parent;
-			// 		}
-			// 	}
-			// }
-
 			void rotate_right_(node_pointer x)
 			{
 				node_pointer y = x->left;
@@ -232,41 +195,38 @@ namespace ft
 					}
 				}
 			}
-				
+			
 			ft::pair<iterator, bool> insert(const value_type& value)
 			{
-				node_pointer *iter = &root_node_();
-				node_pointer parent;
+				node_pointer parent = root_;
+				node_pointer iter = root_->left;
 
-				if (*iter == mynullptr)
-				{
-					parent = root_;
-					iter = &(root_->left);
-					std::cout << "first time"  << std::endl;
-				}
+				node_pointer new_node = create_new_node_(value, RED);
+				if (iter == mynullptr)
+					root_->left = new_node;
 				else
 				{
-					std::cout << "second time"  << std::endl;
-					while (*iter != mynullptr)
+					while (iter != mynullptr)
 					{
-						parent = *iter;
-						if (compare_(value, (*iter)->value))
-							*iter = (*iter)->left;
-						else if (compare_((*iter)->value, value))
-							*iter = (*iter)->right;
+						parent = iter;
+						if (compare_(value, iter->value))
+							iter = iter->left;
+						else if (compare_(iter->value, value))
+							iter = iter->right;
 						else
-							return ft::make_pair(iterator(*iter), false);
+							return ft::make_pair(iterator(iter), false);
 					}
+					if (compare_(value, parent->value))
+						parent->left = new_node;
+					else
+						parent->right = new_node;
 				}
-				node_pointer new_node = create_new_node_(value, RED);
-				*iter = new_node;
-				(*iter)->parent = parent;
+				new_node->parent = parent;
 				if (left_most_->left != mynullptr)
 					left_most_ = left_most_->left;
-				// balance_insert(new_node);
-				std::cout << (*iter)->value.first << " | " << (*iter)->parent->value.first << std::endl;
+				balance_insert(new_node);
 				++node_count_;
-				return ft::make_pair(iterator(*iter), true);
+				return ft::make_pair(iterator(iter), true);
 			}
 
 			// template <typename Key>
@@ -306,7 +266,6 @@ namespace ft
 			{
 				if (node != nullptr) 
 				{
-					std::cout << "print" << std::endl;
 					print_from_node_(node->right, prefix + (is_first ? " " : "    "), false, false);
 					std::cout << prefix;
 					if (!is_first)
