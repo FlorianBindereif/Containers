@@ -9,25 +9,25 @@ namespace ft
 	template <typename NodePointer>
 	NodePointer rbt_leftmost(NodePointer node)
 	{
-		while (node->left != mynullptr)
-			node =  node->left;
+		while (node->left != node->nil)
+			node = node->left;
 		return node;
 	}
 
 	template <typename NodePointer>
 	NodePointer rbt_rightmost(NodePointer node)
 	{
-		while (node->right != mynullptr)
-			node =  node->right;
+		while (node->right != node->nil)
+			node = node->right;
 		return node;
 	}
 
 	template <typename NodePointer>
 	NodePointer rbt_next(NodePointer node)
 	{
-		if (node->right != mynullptr)
+		if (node->right != node->nil)
 			return rbt_leftmost(node->right);
-		while (node == node->parent->right)
+		while (node->_parent != node->_nil && node == node->parent->right)
 			node = node->parent;
 		return node->parent;
 	}
@@ -37,7 +37,7 @@ namespace ft
 	{
 		if (node->left != mynullptr)
 			return rbt_rightmost(node->left);
-		while (node == node->parent->left)
+		while (node->_parent != node->_nil && node == node->parent->left)
 			node = node->parent;
 		return node->parent;
 	}

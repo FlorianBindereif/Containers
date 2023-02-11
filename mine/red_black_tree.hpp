@@ -37,26 +37,29 @@ namespace ft
 			value_compare				compare_;
 			node_allocator_type			alloc_node_;
 			allocator_type				alloc_value_;
-			node_pointer				root_;
 			size_type					node_count_;
 			node_pointer				left_most_;
+			node_pointer				root_;
+			node_pointer				nil_;
+
 		
 		private:
 		public:
 
-			node_pointer&				end_node_() {return root_;}
-			const_node_pointer			end_node_() const {return root_;}
-			node_pointer&				root_node_() {return root_->left;}
-			const_node_pointer			root_node_() const {return root_->left;}
+			// node_pointer&			end_node_() {return root_;}
+			// const_node_pointer		end_node_() const {return root_;}
+			node_pointer&				root_node_() {return root_;}
+			const_node_pointer			root_node_() const {return root_;}
 			
-			node_pointer create_new_node_(const value_type& value, COLOUR colour)
+			node_pointer create_new_node_(const value_type& value, COLOUR colour, node_pointer parent)
 			{
 				node_pointer new_node = alloc_node_.allocate(1);
 				alloc_value_.construct(&new_node->value, value);
 				new_node->colour = colour;
-				new_node->parent = mynullptr;
-				new_node->left = mynullptr;
-				new_node->right = mynullptr;
+				new_node->parent = parent;
+				new_node->left = nil_;
+				new_node->right = nil_;
+				new_node->nil = nil_;
 				return new_node;
 			}
 		
@@ -73,10 +76,7 @@ namespace ft
 
 			red_black_tree(const value_compare& compare, const allocator_type& alloc)
 			:compare_(compare), alloc_node_(alloc), alloc_value_(alloc), node_count_(0)
-			{
-				root_ = create_new_node_(value_type(), BLACK);
-				root_->parent = left_most_ = root_;
-			}
+			{ left_most_ = root_ = nil_ = create_new_node_(value_type(), BLACK, nil_);}
 
 			/***********************************************
 				Iterators
@@ -86,9 +86,9 @@ namespace ft
 
 			const_iterator begin() const { return const_iterator(left_most_);}
 
-			iterator end() { return iterator(end_node_());}
+			iterator end() { return iterator(nil_);}
 	
-			const_iterator end() const { return const_iterator(end_node_());}
+			const_iterator end() const { return const_iterator(nil_);}
 
 			/***********************************************
 				Capacity
@@ -103,42 +103,45 @@ namespace ft
 			void rotate_right_(node_pointer x)
 			{
 				node_pointer y = x->left;
-				x->left = y->right;
-				if (x->left != mynullptr)
-					x->left->parent = x;
+				x->left = y->right;					// turn y's subtree in x's subtree
+				if (y->right != nil_)
+					y->right->parent = x;
 				y->parent = x->parent;
-				if (x == x->parent->left)
-					x->parent->left = y;
-				else
+				if (x->parent == nil_)				// if x is root
+					root_ = y;
+				else if (x == x->parent->right)		// or x is left child
 					x->parent->right = y;
-				y->right = x;
+				else								// or x is right child
+					x->parent->left = y;
+				y->right = x;						//put x on y's left
 				x->parent = y;
 			}
 
 			void rotate_left_(node_pointer x)
 			{
 				node_pointer y = x->right;
-				x->right = y->left;
-				if (x->right != mynullptr)
-					x->right->parent = x;
+				x->right = y->left;					// turn y's subtree in x's subtree
+				if (y->left != nil_)
+					y->left->parent = x;
 				y->parent = x->parent;
-				if (x == x->parent->left)
+				if (x->parent == nil_)				// if x is root
+					root_ = y;
+				else if (x == x->parent->left)		// or x is left child
 					x->parent->left = y;
-				else
+				else								// or x is right child
 					x->parent->right = y;
-				y->left = x;
+				y->left = x;						//put x on y's left
 				x->parent = y;
 			}
-
-			
+	
 			void balance_insert(node_pointer node)
 			{
-				while(node != root_->left && node->parent->colour == RED)
+				while(node != root_ && node->parent->colour == RED)
 				{
 					if(node->parent->parent->left == node->parent)
 					{
 						node_pointer uncle = node->parent->parent->right;
-						if (uncle != mynullptr && uncle->colour == RED)
+						if (uncle != nil_ && uncle->colour == RED)
 						{
 							uncle->colour = BLACK;
 							node->parent->colour = BLACK;
@@ -155,7 +158,6 @@ namespace ft
 							node->parent->colour = BLACK;
 							node->parent->parent->colour = RED;
 							rotate_right_(node->parent->parent);
-							break;
 						}
 					}
 					else
@@ -178,47 +180,44 @@ namespace ft
 							node->parent->colour = BLACK;
 							node->parent->parent->colour = RED;
 							rotate_left_(node->parent->parent);
-							break;
 						}
 					}
-					root_->left->colour = BLACK;
+					root_->colour = BLACK;
 				}
 			}
 			
 			ft::pair<iterator, bool> insert(const value_type& value)
 			{
-				node_pointer parent = root_;
-				node_pointer iter = root_->left;
+				node_pointer parent = root_, new_node;
 
-				node_pointer new_node = create_new_node_(value, RED);
-				if (iter == mynullptr)
+				for(node_pointer iter = root_; iter != nil_;)
 				{
-					root_->left = new_node;
-					new_node->colour = BLACK;
+					parent = iter;
+					if (compare_(value, iter->value))
+						iter = iter->left;
+					else if (compare_(iter->value, value))
+						iter = iter->right;
+					else
+						return ft::make_pair(iterator(iter), false);
 				}
+				if (root_ == nil_)
+					root_ = left_most_ = new_node = create_new_node_(value, BLACK, parent);
 				else
 				{
-					while (iter != mynullptr)
-					{
-						parent = iter;
-						if (compare_(value, iter->value))
-							iter = iter->left;
-						else if (compare_(iter->value, value))
-							iter = iter->right;
-						else
-							return ft::make_pair(iterator(iter), false);
-					}
+					new_node = create_new_node_(value, RED, parent);
 					if (compare_(value, parent->value))
 						parent->left = new_node;
 					else
 						parent->right = new_node;
 				}
-				new_node->parent = parent;
-				if (left_most_->left != mynullptr)
+				// new_node->nil = new_node->left;
+				if (left_most_->left != nil_)
 					left_most_ = left_most_->left;
 				balance_insert(new_node);
 				++node_count_;
-				return ft::make_pair(iterator(iter), true);
+				if (new_node == rbt_rightmost(root_)) //vielleicht nciht notwendig
+					nil_->parent = new_node;
+				return ft::make_pair(iterator(new_node), true);
 			}
 
 			// template <typename Key>
@@ -256,7 +255,7 @@ namespace ft
 			void print_from_node_(node_pointer node, const std::string& prefix = "", bool is_left = false,
 			bool is_first = true)
 			{
-				if (node != nullptr) 
+				if (node != nil_) 
 				{
 					print_from_node_(node->right, prefix + (is_first ? " " : "    "), false, false);
 					std::cout << prefix;
@@ -270,4 +269,4 @@ namespace ft
 				}
 			}
 		};
-	};
+};
