@@ -93,14 +93,81 @@ namespace ft
 				const allocator_type& alloc = allocator_type())
 				:tree_(value_type_compare(comp), alloc){}
 
+		public:
+
+			/***********************************************
+				ITERATORS
+			***********************************************/
+
+			iterator begin()
+			{ return tree_.begin();}
+
+			const_iterator begin() const
+			{ return tree_.begin();}
+
+			iterator end()
+			{ return tree_.end();}
+
+			const_iterator end()
+			{ return tree_.end();}
+
+			reverse_iterator rbegin()
+			{ return end();}
+
+			const_reverse_iterator rbegin() const
+			{ return end();}
+
+			reverse_iterator rend()
+			{ return begin();}
+
+			const_reverse_iterator rend() const
+			{ return begin();}
+
+			/***********************************************
+				CAPACITY
+			***********************************************/
+
+			bool empty() const
+			{return tree_.empty();}
+		
+			size_type size() const
+			{ return tree_.size();}
+
+			size_type max_size() const
+			{ return }
+			/***********************************************
+				ELEMENT ACCESS
+			***********************************************/
+
+			reference at(const key_type& key)
+			{ 
+				
+				return tree_.find(key); 
+			}
+
+			const_reference at(const key_type& key) const
+			{ return tree_.find(key); }
+
+			/*Returns a reference to the mapped value of the element with key equivalent to key.*/
+			void print_tree()
+			{ tree_.print_from_node_(tree_.root_node_()); }
 
 		    ft::pair<iterator, bool> insert(const value_type& val) 
 			{ return tree_.insert(val); }
-		
-			void print_tree()
+
+			/***********************************************
+				Lookup
+			***********************************************/
+			
+			size_type count(const key_type& key) const
 			{
-				tree_.print_from_node_(tree_.root_node_());
+				if (tree_.find(key) == end())
+					return 0;
+				return 1;
 			}
+
+			iterator find (const key_type& key)
+			{ tree_.find(key); }
 
 		private:
 			tree_type tree_;

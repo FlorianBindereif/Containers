@@ -7,7 +7,6 @@
 
 namespace ft
 {
-	//compare removen
 	template <typename T, typename COMPARE, typename Allocator >
 	class red_black_tree
 	{
@@ -32,7 +31,6 @@ namespace ft
 			typedef ft::reverse_iterator<iterator>								reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 
-		
 		protected:
 			value_compare				compare_;
 			node_allocator_type			alloc_node_;
@@ -41,24 +39,10 @@ namespace ft
 			node_pointer				left_most_;
 			node_pointer				root_;
 			node_pointer				nil_;
-
-		
-		private:
-		public:
-			
-			node_pointer create_new_node_(const value_type& value, COLOUR colour, node_pointer parent)
-			{
-				node_pointer new_node = alloc_node_.allocate(1);
-				alloc_value_.construct(&new_node->value, value);
-				new_node->colour = colour;
-				new_node->parent = parent;
-				new_node->left = nil_;
-				new_node->right = nil_;
-				new_node->nil = nil_;
-				return new_node;
-			}
 		
 		public:	
+
+			node_pointer root_node_(){return root_;};
 
 			red_black_tree(const red_black_tree& other)
 			:compare_(other.compare_),
@@ -66,7 +50,7 @@ namespace ft
 			alloc_value_(other.alloc_value_),
 			node_count_(other.node_count_)
 			{
-				root_ = create_new_node_(value_type(), BLACK);
+				nil_ = create_new_node_(value_type(), BLACK, nil_);
 				*this = other;
 			}
 
@@ -83,18 +67,18 @@ namespace ft
 					clear();
 					alloc_node_ = other.alloc_node_;
 					alloc_value_ = other.alloc_value_;
-					root_ = tree_copy(other.root_, nil_, other.nil_);
+					root_ = tree_copy_(other.root_, nil_, other.nil_);
 					node_count_ = other.node_count_;
 					left_most_ = rbt_leftmost(root_);
 				}
 				return *this;
 			}
-
+			
 			~red_black_tree()
 			{
 				clear();
-				alloc_node.destroy(nil_);
-				alloc_node.deallocate(nil_);
+				alloc_node_.destroy(nil_);
+				alloc_node_.deallocate(nil_, 1);
 			}
 
 			/***********************************************
@@ -121,13 +105,25 @@ namespace ft
 		
 		private:
 
-			tree_copy(node_pointer node, node_pointer parent, node_pointer nil)
+			node_pointer create_new_node_(const value_type& value, COLOUR colour, node_pointer parent)
+			{
+				node_pointer new_node = alloc_node_.allocate(1);
+				alloc_value_.construct(&new_node->value, value);
+				new_node->colour = colour;
+				new_node->parent = parent;
+				new_node->left = nil_;
+				new_node->right = nil_;
+				new_node->nil = nil_;
+				return new_node;
+			}
+
+			node_pointer tree_copy_(node_pointer node, node_pointer parent, node_pointer nil)
 			{
 				if (node == nil)
 					return nil_;
 				node_pointer new_node = create_new_node_(node->value, node->colour, parent);
-				new_node->left = tree_copy(node->left, new_node, nil);
-				new_node->left = tree_copy(node->right, new_node, nil);
+				new_node->left = tree_copy_(node->left, new_node, nil);
+				new_node->left = tree_copy_(node->right, new_node, nil);
 				return new_node;
 			}
 
@@ -165,7 +161,7 @@ namespace ft
 				x->parent = y;
 			}
 
-			transplant_(node_pointer x, node_pointer y)
+			void transplant_(node_pointer x, node_pointer y)
 			{
 				if (x->parent == nil_)
 					root_ = y;
@@ -179,7 +175,7 @@ namespace ft
 			void balance_erase_(node_pointer node)
 			{
 				node_pointer sibling;
-				while(node != _root && node->coolour == BLACK)
+				while(node != root_ && node->coolour == BLACK)
 				{
 					if (node == node->parent->left)
 					{
@@ -298,31 +294,31 @@ namespace ft
 					root_->colour = BLACK;
 				}
 			}
-		
-		public:
 
-			clear()
-			{
-				clear_tree(root_);
-				node_count_ = 0;
-				root_ = nil_;
-				left_most_ = root_;
-			}
-
-			void destroy_node_(node_pointer node)
-			{
-				alloc_value_.destroy(&node->value);
-				alloc_node_.desotroy(node, 1);
-				node = nil_;
-			}
-
-			void clear_tree(node_pointer node)
+			void clear_tree_(node_pointer node)
 			{
 				if (node == nil_ || node == mynullptr) // node == node->_left || node == node->_right
 					return ;
-				clear_tree(node->right);
-				clear_tree(node->left)
+				clear_tree_(node->right);
+				clear_tree_(node->left);
 				destroy_node_(node);
+			}
+		
+			void destroy_node_(node_pointer node)
+			{
+				alloc_value_.destroy(&node->value);
+				alloc_node_.deallocate(node, 1);
+				node = nil_;
+			}
+
+		public:
+
+			void clear()
+			{
+				clear_tree_(root_);
+				node_count_ = 0;
+				root_ = nil_;
+				left_most_ = root_;
 			}
 
 			size_type	erase(iterator pos)
@@ -362,6 +358,7 @@ namespace ft
 					y->left->parent = y;
 					y->colour = z->colour;
 				}
+				destroy_node_(z);
 				if (original_colour == BLACK)
 					balance_erase_();
 				--node_count_;
@@ -409,7 +406,7 @@ namespace ft
 				while(iter != nil_)
 				{
 					if (compare_(iter->value, key))
-						iter = iter_->right_;
+						iter = iter->right_;
 					else if (compare_(key, iter->value))
 						iter = iter->left_;
 					else
@@ -425,7 +422,7 @@ namespace ft
 				while(iter != nil_)
 				{
 					if (compare_(iter->value, key))
-						iter = iter_->right_;
+						iter = iter->right_;
 					else if (compare_(key, iter->value))
 						iter = iter->left_;
 					else
@@ -434,9 +431,64 @@ namespace ft
 				return (end());
 			}
 
-			size_type size() {return node_count_};
+			void swap(red_black_tree& other)
+			{
+				ft::swap(alloc_node_, other.alloc_node_);
+				ft::swap(compare_, other.compare_);
+				ft::swap(node_count_, other.node_count_);
+				ft::swap(root_, other.root_);
+				ft::swap(nil_, other.nil_);
+				ft::swap(nil_, other.nil_);
+				ft::swap(left_most_, other.left_most_);
+			}
 
-			void print_from_node_(node_pointer node, const std::string& prefix = "", bool is_left = false,
+			template <typename Key>
+			iterator lower_bound(const Key& key)
+			{
+				iterator it = begin();
+
+				while (compare_(*it, key))
+					++it;
+				return it;	
+			}
+
+			template <typename Key>
+			const_iterator lower_bound(const Key& key)
+			{
+				const_iterator it = begin();
+
+				while (compare_(*it, key))
+					++it;
+				return it;	
+			}
+
+			template <typename Key>
+			iterator upper_bound(const Key& key)
+			{
+				iterator it = lower_bound(key);
+				while (!compare_(*it, key) && !compare_(key, *it))
+					++it;
+				return it;
+			}
+
+			template <typename Key>
+			const_iterator upper_bound(const Key& key)
+			{
+				const_iterator it = lower_bound(key);
+				while (!compare_(*it, key) && !compare_(key, *it))
+					++it;
+				return it;
+			}
+
+			template <typename Key>
+			ft::pair<iterator,iterator> equal_range(const Key& key)
+			{return ft::make_pair(lower_bound(key), upper_bound(key)); }
+
+			template <typename Key>
+			ft::pair<const_iterator, const_iterator> equal_range(const Key& key) const
+			{return ft::make_pair(lower_bound(key), upper_bound(key)); }
+
+			void print_from_node(node_pointer node, const std::string& prefix = "", bool is_left = false,
 			bool is_first = true)
 			{
 				if (node != nil_) 
@@ -452,5 +504,5 @@ namespace ft
 					print_from_node_(node->left, prefix + (is_first ? " " : "    "), true, false);
 				}
 			}
-		};
-};
+	};
+}

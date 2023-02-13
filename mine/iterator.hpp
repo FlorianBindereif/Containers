@@ -14,7 +14,7 @@ namespace ft
 		protected:
 			Iterator current_;
 
-			public:
+		public:
 			typedef Iterator                                                    iterator_type;
 			typedef typename ft::iterator_traits<Iterator>::value_type          value_type;
 			typedef typename ft::iterator_traits<Iterator>::pointer             pointer;
