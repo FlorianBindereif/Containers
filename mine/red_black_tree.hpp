@@ -1,9 +1,11 @@
 #pragma once
+
 #include "mynullptr.hpp"
 #include "iterator.hpp"
 #include "rbt_iterator.hpp"
 #include "pair.hpp"
 #include <memory>
+#include <iostream>
 
 namespace ft
 {
@@ -42,7 +44,7 @@ namespace ft
 		
 		public:	
 
-			node_pointer root_node_(){return root_;};
+			node_pointer root_node() { return root_; }
 
 			red_black_tree(const red_black_tree& other)
 			:compare_(other.compare_),
@@ -50,7 +52,7 @@ namespace ft
 			alloc_value_(other.alloc_value_),
 			node_count_(other.node_count_)
 			{
-				nil_ = create_new_node_(value_type(), BLACK, nil_);
+				left_most_ = root_ = nil_ = create_new_node_(value_type(), BLACK, nil_);
 				*this = other;
 			}
 
@@ -64,9 +66,9 @@ namespace ft
 			{
 				if (this != &other)
 				{
-					clear();
 					alloc_node_ = other.alloc_node_;
 					alloc_value_ = other.alloc_value_;
+					clear();
 					root_ = tree_copy_(other.root_, nil_, other.nil_);
 					node_count_ = other.node_count_;
 					left_most_ = rbt_leftmost(root_);
@@ -175,7 +177,7 @@ namespace ft
 			void balance_erase_(node_pointer node)
 			{
 				node_pointer sibling;
-				while(node != root_ && node->coolour == BLACK)
+				while(node != root_ && node->colour == BLACK)
 				{
 					if (node == node->parent->left)
 					{
@@ -183,7 +185,7 @@ namespace ft
 						if (sibling->colour == RED)
 						{
 							sibling->colour = BLACK;
-							node->parent->colour == RED;
+							node->parent->colour = RED;
 							rotate_left_(node->parent);
 							sibling = node->parent->right;
 						}
@@ -214,7 +216,7 @@ namespace ft
 						if (sibling->colour == RED)
 						{
 							sibling->colour = BLACK;
-							node->parent->colour == RED;
+							node->parent->colour = RED;
 							rotate_right_(node->parent);
 							sibling = node->parent->left;
 						}
@@ -297,7 +299,7 @@ namespace ft
 
 			void clear_tree_(node_pointer node)
 			{
-				if (node == nil_ || node == mynullptr) // node == node->_left || node == node->_right
+				if (node == nil_ || node == mynullptr || node == node->left || node == node->right)
 					return ;
 				clear_tree_(node->right);
 				clear_tree_(node->left);
@@ -321,10 +323,11 @@ namespace ft
 				left_most_ = root_;
 			}
 
-			size_type	erase(iterator pos)
+			iterator	erase(iterator pos)
 			{
 				if (pos == end())
-					return 0;
+					return end();
+				node_pointer next = rbt_next(pos.base());
 				node_pointer z = pos.base();
 				node_pointer y = z;
 				node_pointer x;
@@ -360,9 +363,9 @@ namespace ft
 				}
 				destroy_node_(z);
 				if (original_colour == BLACK)
-					balance_erase_();
+					balance_erase_(x);
 				--node_count_;
-				return 1;
+				return iterator(next);
 			}
 
 			ft::pair<iterator, bool> insert(const value_type& value)
@@ -406,9 +409,9 @@ namespace ft
 				while(iter != nil_)
 				{
 					if (compare_(iter->value, key))
-						iter = iter->right_;
+						iter = iter->right;
 					else if (compare_(key, iter->value))
-						iter = iter->left_;
+						iter = iter->left;
 					else
 						return iterator(iter);
 				}
@@ -416,15 +419,15 @@ namespace ft
 			}
 
 			template <typename Key>
-			iterator find (const Key& key) const
+			const_iterator find (const Key& key) const
 			{
 				node_pointer iter = root_;
 				while(iter != nil_)
 				{
 					if (compare_(iter->value, key))
-						iter = iter->right_;
+						iter = iter->right;
 					else if (compare_(key, iter->value))
-						iter = iter->left_;
+						iter = iter->left;
 					else
 						return const_iterator(iter);
 				}
@@ -449,33 +452,33 @@ namespace ft
 
 				while (compare_(*it, key))
 					++it;
-				return it;	
+				return iterator(it);	
 			}
 
 			template <typename Key>
-			const_iterator lower_bound(const Key& key)
+			const_iterator lower_bound(const Key& key) const
 			{
 				const_iterator it = begin();
 
 				while (compare_(*it, key))
 					++it;
-				return it;	
+				return const_iterator(it);
 			}
 
 			template <typename Key>
 			iterator upper_bound(const Key& key)
 			{
 				iterator it = lower_bound(key);
-				while (!compare_(*it, key) && !compare_(key, *it))
+				if (!compare_(*it, key) && !compare_(key, *it))
 					++it;
 				return it;
 			}
 
 			template <typename Key>
-			const_iterator upper_bound(const Key& key)
+			const_iterator upper_bound(const Key& key) const
 			{
 				const_iterator it = lower_bound(key);
-				while (!compare_(*it, key) && !compare_(key, *it))
+				if(!compare_(*it, key) && !compare_(key, *it))
 					++it;
 				return it;
 			}
@@ -488,7 +491,7 @@ namespace ft
 			ft::pair<const_iterator, const_iterator> equal_range(const Key& key) const
 			{return ft::make_pair(lower_bound(key), upper_bound(key)); }
 
-			void print_from_node(node_pointer node, const std::string& prefix = "", bool is_left = false,
+			void print_from_node_(node_pointer node, const std::string& prefix = "", bool is_left = false,
 			bool is_first = true)
 			{
 				if (node != nil_) 

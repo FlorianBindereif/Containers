@@ -3,10 +3,12 @@
 #include "iterator_traits.hpp"
 #include "rbt_node.hpp"
 #include "mynullptr.hpp"
+#include "algorithm.hpp"
 
+#include <iostream>
 namespace ft
 {
-	template <typename NodePointer>
+	template <class NodePointer>
 	NodePointer rbt_leftmost(NodePointer node)
 	{
 		while (node->left != node->nil)
@@ -14,7 +16,7 @@ namespace ft
 		return node;
 	}
 
-	template <typename NodePointer>
+	template <class NodePointer>
 	NodePointer rbt_rightmost(NodePointer node)
 	{
 		while (node->right != node->nil)
@@ -22,22 +24,22 @@ namespace ft
 		return node;
 	}
 
-	template <typename NodePointer>
+	template <class NodePointer>
 	NodePointer rbt_next(NodePointer node)
 	{
 		if (node->right != node->nil)
 			return rbt_leftmost(node->right);
-		while (node->_parent != node->_nil && node == node->parent->right)
+		while (node->parent != node->nil && node == node->parent->right)
 			node = node->parent;
 		return node->parent;
 	}
 
-	template <typename NodePointer>
+	template <class NodePointer>
 	NodePointer rbt_previous(NodePointer node)
 	{
 		if (node->left != mynullptr)
 			return rbt_rightmost(node->left);
-		while (node->_parent != node->_nil && node == node->parent->left)
+		while (node->parent != node->nil && node == node->parent->left)
 			node = node->parent;
 		return node->parent;
 	}
@@ -104,7 +106,7 @@ namespace ft
 				return tmp;
 			}
 
-			node_pointer base()
+			node_pointer base() const
 			{ return current_;}
 
 			/***********************************************
@@ -124,23 +126,23 @@ namespace ft
 				return tmp;
 			}
 
-			reference operator*()
+			reference operator*() const
 			{ return current_->value;}
 
-			pointer operator->()
+			pointer operator->() const
 			{ return &(operator*());}
 
 			/***********************************************
 				ITERATOR COMPARISON REQUIREMENTS
 			***********************************************/
 
-			bool operator==(const rbt_iter& other) { return current_ == other.base();}
+			bool operator==(const rbt_iter& other) const { return current_ == other.base();}
 
-			bool operator==(const const_rbt_iter& other) {return current_ == other.base();}
+			bool operator==(const const_rbt_iter& other) const {return current_ == other.base();}
 
-			bool operator!=(const rbt_iter& other) { return current_ != other.base();}
+			bool operator!=(const rbt_iter& other) const { return current_ != other.base();}
 
-			bool operator!=(const const_rbt_iter& other) { return current_ != other.base();}
+			bool operator!=(const const_rbt_iter& other) const { return current_ != other.base();}
 	};
 	
 
@@ -149,8 +151,8 @@ namespace ft
 	{
 		public:
 			typedef	T													value_type;
-			typedef T*													pointer;
-			typedef T&													reference;
+			typedef const T*											pointer;
+			typedef const T&											reference;
 			typedef DIFFTYPE											difference_type;
 			typedef bidirectional_iterator_tag							iterator_category;
 
@@ -197,18 +199,18 @@ namespace ft
 
 			const_rbt_iter& operator++()
 			{
-				current_ = rbt_next<node_pointer>(current_);
+				current_ = rbt_next<const_node_pointer>(current_);
 				return *this;
 			}
 
 			const_rbt_iter operator++(int)
 			{
 				const_rbt_iter tmp = *this;
-				current_ = rbt_next<node_pointer>(current_);
+				current_ = rbt_next<const_node_pointer>(current_);
 				return tmp;
 			}
 
-			node_pointer base()
+			const_node_pointer base() const
 			{ return current_;}
 
 			/***********************************************
@@ -228,23 +230,22 @@ namespace ft
 				return tmp;
 			}
 
-			reference operator*()
+			reference operator*() const
 			{ return current_->value;}
 
-			pointer operator->()
+			pointer operator->() const
 			{ return &(operator*());}
 
 			/***********************************************
 				ITERATOR COMPARISON REQUIREMENTS
 			***********************************************/
 
-			bool operator==(const const_rbt_iter& other) { return current_ == other.base();}
+			bool operator==(const const_rbt_iter& other) const { return current_ == other.base();}
 
-			bool operator!=(const const_rbt_iter& other) { return current_ != other.base();}
+			bool operator!=(const const_rbt_iter& other) const { return current_ != other.base();}
 
-			bool operator==(const rbt_iter &other) { return current_ == other.base();}
+			bool operator==(const rbt_iter &other) const { return current_ == other.base();}
 
-			bool operator!=(const rbt_iter &other) { return current_ != other.base();}
+			bool operator!=(const rbt_iter &other) const { return current_ != other.base();}
 	};
-
 }
