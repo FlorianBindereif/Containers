@@ -16,13 +16,12 @@ int main(void)
 	test_map.insert(ft::make_pair<int, std::string>(12, std::string("hello12")));
 	test_map.insert(ft::make_pair<int, std::string>(13, std::string("hello13")));
 	test_map.insert(ft::make_pair<int, std::string>(14, std::string("hello14")));
-	// std::cout << test_map.at(1212) << std::endl;
 	ft::map<int, std::string> test_map2(test_map);
 
-	// test_map2.insert(ft::make_pair<int, std::string>(15, std::string("hello15")));
+	test_map.print_tree();
+	test_map2.print_tree();
 
 	// test_map.clear();
 }
 
 
-			

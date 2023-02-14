@@ -124,8 +124,8 @@ namespace ft
 				if (node == nil)
 					return nil_;
 				node_pointer new_node = create_new_node_(node->value, node->colour, parent);
+				new_node->right = tree_copy_(node->right, new_node, nil);
 				new_node->left = tree_copy_(node->left, new_node, nil);
-				new_node->left = tree_copy_(node->right, new_node, nil);
 				return new_node;
 			}
 
