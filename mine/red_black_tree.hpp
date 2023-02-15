@@ -361,6 +361,8 @@ namespace ft
 					y->left->parent = y;
 					y->colour = z->colour;
 				}
+				if (z == left_most_)
+					left_most_ = next;
 				destroy_node_(z);
 				if (original_colour == BLACK)
 					balance_erase_(x);
@@ -450,7 +452,7 @@ namespace ft
 			{
 				iterator it = begin();
 
-				while (compare_(*it, key))
+				while (compare_(*it, key) && it != end())
 					++it;
 				return iterator(it);	
 			}
@@ -460,7 +462,7 @@ namespace ft
 			{
 				const_iterator it = begin();
 
-				while (compare_(*it, key))
+				while (compare_(*it, key) && it != end())
 					++it;
 				return const_iterator(it);
 			}
@@ -497,13 +499,13 @@ namespace ft
 				if (node != nil_) 
 				{
 					print_from_node_(node->right, prefix + (is_first ? " " : "    "), false, false);
-					std::cout << prefix;
+					std::cerr << prefix;
 					if (!is_first)
-						std::cout << (is_left ? "└──" : "┌──");
+						std::cerr << (is_left ? "└──" : "┌──");
 					if (node->colour == BLACK)
-						std::cout << node->value.first << std::endl;
+						std::cerr << node->value.first << std::endl;
 					else
-						std::cout << "\033[0;31m" << node->value.first << "\033[0m" << std::endl;
+						std::cerr << "\033[0;31m" << node->value.first << "\033[0m" << std::endl;
 					print_from_node_(node->left, prefix + (is_first ? " " : "    "), true, false);
 				}
 			}
