@@ -322,7 +322,7 @@ namespace ft
 			value_compare value_comp() const
 			{ return value_compare(); }
 
-			allocator_type getc_allocator() const
+			allocator_type get_allocator() const
 			{ return tree_.get_allocator(); }
 
 			void print_tree()

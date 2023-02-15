@@ -109,7 +109,7 @@ namespace ft
 				GETTERS
 			***********************************************/
 			
-			allocator_type get_allocator() 
+			allocator_type get_allocator() const
 			{ return alloc_value_;}
 		private:
 
