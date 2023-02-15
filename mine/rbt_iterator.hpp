@@ -37,7 +37,9 @@ namespace ft
 	template <class NodePointer>
 	NodePointer rbt_previous(NodePointer node)
 	{
-		if (node->left != mynullptr)
+		if (node == node->nil)
+			return node->parent;
+		if (node->left != node->nil)
 			return rbt_rightmost(node->left);
 		while (node->parent != node->nil && node == node->parent->left)
 			node = node->parent;

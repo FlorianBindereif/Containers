@@ -226,7 +226,18 @@ namespace ft
 
 			/*Removes the element at pos*/
 			iterator erase(iterator pos)
-			{return tree_.erase(pos); }
+			{
+				// std::cerr << pos.base()->value.first;
+				try
+				{
+					return tree_.erase(pos);
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << e.what() << "ft::map::compare";
+				}
+				return pos;
+			}	
 
 			/*Removes the elements in the range [first, last)*/
 			iterator erase( iterator first, iterator last)
@@ -247,8 +258,10 @@ namespace ft
 			size_type erase( const Key& key )
 			{
 				iterator node = find(key);
-				if (tree_.erase(node) == end())
+
+				if (node == end())
 					return 0;
+				tree_.erase(node);
 				return 1;
 			}
 
