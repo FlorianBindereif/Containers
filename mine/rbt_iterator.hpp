@@ -56,11 +56,12 @@ namespace ft
 			typedef T&													reference;
 			typedef DIFFTYPE											difference_type;
 			typedef bidirectional_iterator_tag							iterator_category;
+			typedef const_rbt_iterator<value_type, DIFFTYPE>			const_iterator;
+			typedef rbt_iterator<value_type, DIFFTYPE>					iterator;
 
 		private:
-			typedef typename Node<value_type>::pointer					node_pointer; 
-			typedef rbt_iterator<value_type, DIFFTYPE>					rbt_iter;
-			typedef const_rbt_iterator<value_type, DIFFTYPE>			const_rbt_iter;
+			typedef typename Node<value_type>::pointer					node_pointer;
+			typedef typename Node<value_type>::const_pointer			const_node_pointer;
 
 		protected:
 			node_pointer current_;
@@ -79,7 +80,7 @@ namespace ft
 			:current_(pointer){}
 
 			/*Copy Constructor*/
-			rbt_iterator(const rbt_iterator& other)
+			rbt_iterator(const iterator& other)
 			:current_(other.current_){}
 
 			/***********************************************
@@ -93,15 +94,15 @@ namespace ft
 				FORWARD ITERATOR REQUIREMENTS
 			***********************************************/
 
-			rbt_iter& operator++()
+			iterator& operator++()
 			{
 				current_ = rbt_next<node_pointer>(current_);
 				return *this;
 			}
 
-			rbt_iter operator++(int)
+			iterator operator++(int)
 			{
-				rbt_iter tmp = *this;
+				iterator tmp = *this;
 				current_ = rbt_next<node_pointer>(current_);
 				return tmp;
 			}
@@ -113,15 +114,15 @@ namespace ft
 				BIDIRECTIONAL ITERATOR REQUIREMENTS
 			***********************************************/
 
-			rbt_iter& operator--()
+			iterator& operator--()
 			{
 				current_ = rbt_previous<node_pointer>(current_);
 				return *this;
 			}
 
-			rbt_iter operator--(int)
+			iterator operator--(int)
 			{
-				rbt_iter tmp = *this;
+				iterator tmp = *this;
 				current_ = rbt_previous<node_pointer>(current_);
 				return tmp;
 			}
@@ -136,13 +137,13 @@ namespace ft
 				ITERATOR COMPARISON REQUIREMENTS
 			***********************************************/
 
-			bool operator==(const rbt_iter& other) const { return current_ == other.base();}
+			bool operator==(const iterator& other) const { return current_ == other.base();}
 
-			bool operator==(const const_rbt_iter& other) const {return current_ == other.base();}
+			bool operator==(const const_iterator& other) const {return current_ == other.base();}
 
-			bool operator!=(const rbt_iter& other) const { return current_ != other.base();}
+			bool operator!=(const iterator& other) const { return current_ != other.base();}
 
-			bool operator!=(const const_rbt_iter& other) const { return current_ != other.base();}
+			bool operator!=(const const_iterator& other) const { return current_ != other.base();}
 	};
 	
 
@@ -155,12 +156,12 @@ namespace ft
 			typedef const T&											reference;
 			typedef DIFFTYPE											difference_type;
 			typedef bidirectional_iterator_tag							iterator_category;
+			typedef const_rbt_iterator<value_type, DIFFTYPE>			const_iterator;
+			typedef rbt_iterator<value_type, DIFFTYPE>					iterator;
 
 		private:
 			typedef typename Node<value_type>::pointer					node_pointer;
 			typedef typename Node<value_type>::const_pointer			const_node_pointer;
-			typedef const_rbt_iterator<value_type, DIFFTYPE>			const_rbt_iter;
-			typedef rbt_iterator<value_type, DIFFTYPE>					rbt_iter;
 
 		protected:
 			const_node_pointer current_;
@@ -179,11 +180,11 @@ namespace ft
 			:current_(pointer){}
 
 			/*Constructor that allows iterator to const_iterator conversion*/
-			const_rbt_iterator(rbt_iter& other)
+			const_rbt_iterator(iterator& other)
 			:current_(other.base()){}
 
 			/*Copy Constructor*/
-			const_rbt_iterator(const const_rbt_iter& other)
+			const_rbt_iterator(const const_iterator& other)
 			:current_(other.current_){}
 
 			/***********************************************
@@ -197,15 +198,15 @@ namespace ft
 				FORWARD ITERATOR REQUIREMENTS
 			***********************************************/
 
-			const_rbt_iter& operator++()
+			const_iterator& operator++()
 			{
 				current_ = rbt_next<const_node_pointer>(current_);
 				return *this;
 			}
 
-			const_rbt_iter operator++(int)
+			const_iterator operator++(int)
 			{
-				const_rbt_iter tmp = *this;
+				const_iterator tmp = *this;
 				current_ = rbt_next<const_node_pointer>(current_);
 				return tmp;
 			}
@@ -217,15 +218,15 @@ namespace ft
 				BIDIRECTIONAL ITERATOR REQUIREMENTS
 			***********************************************/
 
-			const_rbt_iter& operator--()
+			const_iterator& operator--()
 			{
 				current_ = rbt_previous<node_pointer>(current_);
 				return *this;
 			}
 
-			const_rbt_iter operator--(int)
+			const_iterator operator--(int)
 			{
-				const_rbt_iter tmp = *this;
+				const_iterator tmp = *this;
 				current_ = rbt_previous<node_pointer>(current_);
 				return tmp;
 			}
@@ -240,12 +241,12 @@ namespace ft
 				ITERATOR COMPARISON REQUIREMENTS
 			***********************************************/
 
-			bool operator==(const const_rbt_iter& other) const { return current_ == other.base();}
+			bool operator==(const const_iterator& other) const { return current_ == other.base();}
 
-			bool operator!=(const const_rbt_iter& other) const { return current_ != other.base();}
+			bool operator!=(const const_iterator& other) const { return current_ != other.base();}
 
-			bool operator==(const rbt_iter &other) const { return current_ == other.base();}
+			bool operator==(const iterator &other) const { return current_ == other.base();}
 
-			bool operator!=(const rbt_iter &other) const { return current_ != other.base();}
+			bool operator!=(const iterator &other) const { return current_ != other.base();}
 	};
 }

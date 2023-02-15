@@ -52,14 +52,14 @@ namespace ft
 			alloc_value_(other.alloc_value_),
 			node_count_(other.node_count_)
 			{
-				left_most_ = root_ = nil_ = create_new_node_(value_type(), BLACK, nil_);
+				left_most_ = root_ = nil_ = create_nil_();
 				*this = other;
 			}
 
 			red_black_tree(const value_compare& compare, const allocator_type& alloc)
 			:compare_(compare), alloc_node_(alloc), alloc_value_(alloc), node_count_(0)
 			{ 
-				left_most_ = root_ = nil_ = create_new_node_(value_type(), BLACK, nil_);
+				left_most_ = root_ = nil_ = create_nil_();
 			}
 
 			red_black_tree& operator=(const red_black_tree& other)
@@ -104,8 +104,26 @@ namespace ft
 			size_type max_size() const { return alloc_node_.max_size(); }
 
 			bool empty() const { return node_count_ == 0 ;}
-		
+
+			/***********************************************
+				GETTERS
+			***********************************************/
+			
+			allocator_type get_allocator() 
+			{ return alloc_value_;}
 		private:
+
+			node_pointer create_nil_()
+			{
+				nil_ = alloc_node_.allocate(1);
+				alloc_value_.construct(&nil_->value, value_type());
+				nil_->colour = BLACK;
+				nil_->parent = nil_;
+				nil_->left = nil_;
+				nil_->right = nil_;
+				nil_->nil = nil_;
+				return nil_;
+			}
 
 			node_pointer create_new_node_(const value_type& value, COLOUR colour, node_pointer parent)
 			{
@@ -415,7 +433,7 @@ namespace ft
 					else if (compare_(key, iter->value))
 						iter = iter->left;
 					else
-						return iterator(iter);
+						return iter;
 				}
 				return (end());
 			}
@@ -431,7 +449,7 @@ namespace ft
 					else if (compare_(key, iter->value))
 						iter = iter->left;
 					else
-						return const_iterator(iter);
+						return iter;
 				}
 				return (end());
 			}

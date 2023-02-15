@@ -33,15 +33,14 @@ int main(void)
 	test_map.insert(ft::make_pair<int, std::string>(30, std::string("hello13")));
 	test_map.insert(ft::make_pair<int, std::string>(-22, std::string("hello14")));
 	test_map.insert(ft::make_pair<int, std::string>(-23, std::string("hello14")));
-	test_map.insert(ft::make_pair<int, std::string>(0, std::string("hello14")));
+	test_map.insert(ft::make_pair<int, std::string>(77, std::string("hello14")));
 
-	for (ft::map<int, std::string>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-		std::cout << (*it).first << "  ";
-	std::cout << std::endl;
 	// test_map.print_tree();
-	// std::cout << test_map.size() << std::endl;
-	test_map.erase(-23);
-	// std::cout << test_map.size() << std::endl;
+	for (ft::map<int, std::string>::iterator iter = test_map.begin(); iter != test_map.end(); ++iter)
+		std::cout << (*iter).first << "  ";
+	ft::map<int, std::string>::iterator it = test_map.end();
+	test_map.erase(--it);
+	std::cout << std::endl;
 	for (ft::map<int, std::string>::iterator it = test_map.begin(); it != test_map.end(); ++it)
 		std::cout << (*it).first << "  ";
 	// test_map.print_tree();

@@ -139,7 +139,7 @@ namespace ft
 			inserting if such key does not already exist.*/
 			mapped_type& operator[](const Key& key)
 			{
-				tree_.insert(ft::make_pair(key, mapped_type())).first->second;
+				return tree_.insert(ft::make_pair(key, mapped_type())).first->second;
 			}
 
 			/***********************************************
@@ -308,6 +308,9 @@ namespace ft
 
 			value_compare value_comp() const
 			{ return value_compare(); }
+
+			allocator_type getc_allocator() const
+			{ return tree_.get_allocator(); }
 
 			void print_tree()
 			{ tree_.print_from_node_(tree_.root_node());};
