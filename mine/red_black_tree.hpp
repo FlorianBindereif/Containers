@@ -384,6 +384,7 @@ namespace ft
 				destroy_node_(z);
 				if (original_colour == BLACK)
 					balance_erase_(x);
+				nil_->parent = rbt_rightmost(root_); // muss es eine bessere Lösung geben
 				--node_count_;
 				return iterator(next);
 			}
