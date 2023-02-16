@@ -159,7 +159,7 @@ namespace ft
 			typedef DIFFTYPE											difference_type;
 			typedef bidirectional_iterator_tag							iterator_category;
 			typedef const_rbt_iterator<value_type, DIFFTYPE>			const_iterator;
-			typedef rbt_iterator<value_type, DIFFTYPE>					iterator;
+			typedef ft::rbt_iterator<value_type, DIFFTYPE>				iterator;
 
 		private:
 			typedef typename Node<value_type>::pointer					node_pointer;
@@ -182,7 +182,7 @@ namespace ft
 			:current_(pointer){}
 
 			/*Constructor that allows iterator to const_iterator conversion*/
-			const_rbt_iterator(iterator& other)
+			const_rbt_iterator(const iterator& other)
 			:current_(other.base()){}
 
 			/*Copy Constructor*/

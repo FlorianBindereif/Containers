@@ -418,7 +418,7 @@ namespace ft
 					left_most_ = left_most_->left;
 				balance_insert_(new_node);
 				++node_count_;
-				if (new_node == rbt_rightmost(root_)) //vielleicht nciht notwendig
+				if (new_node == rbt_rightmost(root_)) //geht besser
 					nil_->parent = new_node;
 				return ft::make_pair(iterator(new_node), true);
 			}
