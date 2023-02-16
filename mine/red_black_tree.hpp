@@ -411,9 +411,8 @@ namespace ft
 					if (compare_(value, parent->value))
 						parent->left = new_node;
 					else
-						parent->right = new_node;
+						parent->right = new_node; 
 				}
-				// new_node->nil = new_node->left;
 				if (left_most_->left != nil_)
 					left_most_ = left_most_->left;
 				balance_insert_(new_node);
