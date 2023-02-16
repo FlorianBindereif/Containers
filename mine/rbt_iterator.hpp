@@ -222,14 +222,14 @@ namespace ft
 
 			const_iterator& operator--()
 			{
-				current_ = rbt_previous<node_pointer>(current_);
+				current_ = rbt_previous<const_node_pointer>(current_);
 				return *this;
 			}
 
 			const_iterator operator--(int)
 			{
 				const_iterator tmp = *this;
-				current_ = rbt_previous<node_pointer>(current_);
+				current_ = rbt_previous<const_node_pointer>(current_);
 				return tmp;
 			}
 
