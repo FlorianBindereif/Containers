@@ -457,13 +457,13 @@ namespace ft
 
 			void swap(red_black_tree& other)
 			{
-				ft::swap(alloc_node_, other.alloc_node_);
 				ft::swap(compare_, other.compare_);
-				ft::swap(node_count_, other.node_count_);
+				ft::swap(alloc_value_, other.alloc_value_);
+				ft::swap(alloc_node_, other.alloc_node_);
 				ft::swap(root_, other.root_);
-				ft::swap(nil_, other.nil_);
-				ft::swap(nil_, other.nil_);
 				ft::swap(left_most_, other.left_most_);
+				ft::swap(nil_, other.nil_);
+				ft::swap(node_count_, other.node_count_);
 			}
 
 			template <typename Key>

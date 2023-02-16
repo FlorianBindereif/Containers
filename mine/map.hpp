@@ -267,7 +267,7 @@ namespace ft
 
 			/*Exchanges the contents of the container with those of other*/
 			void swap(map& other)
-			{ ft::swap(tree_.swap(other.tree_));	}
+			{ tree_.swap(other.tree_);	}
 
 			/***********************************************
 				Lookup
