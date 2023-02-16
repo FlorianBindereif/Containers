@@ -164,19 +164,19 @@ namespace ft
 
 			/*Returns a reverse iterator to the first element of the reversed map.*/
 			reverse_iterator rbegin()
-			{ return end();}
+			{ return reverse_iterator(end());}
 
 			/*Returns a read-only reverse iterator to the first element of the reversed map.*/
 			const_reverse_iterator rbegin() const
-			{ return end();}
+			{ return const_reverse_iterator(end());}
 
 			/*Returns a reverse iterator to the element following the last element of the reversed map.*/
 			reverse_iterator rend()
-			{ return begin();}
+			{ return reverse_iterator(begin());}
 
 			/*Returns a read-only reverse iterator to the element following the last element of the reversed map. */
 			const_reverse_iterator rend() const
-			{ return begin();}
+			{ return const_reverse_iterator(begin());}
 
 			/***********************************************
 				CAPACITY
