@@ -320,7 +320,7 @@ namespace ft
 			{ return key_compare(); }
 
 			value_compare value_comp() const
-			{ return value_compare(); }
+			{ return value_compare(key_comp()); }
 
 			allocator_type get_allocator() const
 			{ return tree_.get_allocator(); }
