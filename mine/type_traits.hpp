@@ -30,38 +30,72 @@ namespace ft
 	{typedef T type; };
 
 	/***********************************************
+		QUALIFIER HELPER FUNCTIONS
+	***********************************************/
+
+	template <typename T>
+	struct remove_const 
+	{ typedef T type; };
+
+	template <typename T>
+	struct remove_const<const T> 
+	{ typedef T type; };
+
+	template <typename T>
+	struct remove_volatile 
+	{ typedef T type; };
+
+	template <typename T>
+	struct remove_volatile<volatile T> 
+	{ typedef T type; };
+
+	template <typename T>
+	struct remove_cv 
+	{ typedef typename remove_volatile<typename remove_const<T>::type>::type type; };
+
+
+	/***********************************************
 		INTEGER TYPES
 	***********************************************/	
 
 	/* Base template for integer_type checking*/
 	template<typename T>
-	struct is_integer : public false_type {};
+	struct is_integral_spec : public false_type {};
 
 	/* Specialisation templates for integer_type checking*/
 	template<>
-	struct is_integer <bool>: public true_type {};
+	struct is_integral_spec <bool>: public true_type {};
 
 	template<>
-	struct is_integer <signed char>: public true_type {};
+	struct is_integral_spec <signed char>: public true_type {};
 	
 	template<>
-	struct is_integer <char>: public true_type {};
+	struct is_integral_spec <unsigned char>: public true_type {};
 
 	template<>
-	struct is_integer <short int>: public true_type {};
-	
-	template<>
-	struct is_integer <int>: public true_type {};
-	
-	template<>
-	struct is_integer <long int>: public true_type {};
-	
-	template<>
-	struct is_integer <unsigned int>: public true_type {};
+	struct is_integral_spec <char>: public true_type {};
 
 	template<>
-	struct is_integer <unsigned long int>: public true_type {};
+	struct is_integral_spec <short int>: public true_type {};
 	
+	template<>
+	struct is_integral_spec <unsigned short int>: public true_type {};
+
+	template<>
+	struct is_integral_spec <int>: public true_type {};
+	
+	template<>
+	struct is_integral_spec <unsigned int>: public true_type {};
+	
+	template<>
+	struct is_integral_spec <long int>: public true_type {};
+
+	template<>
+	struct is_integral_spec <unsigned long int>: public true_type {};
+
+	template <typename T>
+	struct is_integral : is_integral_spec <typename remove_cv<T>::type> {};
+
 	/***********************************************
 		COMPARISON OF VALUE TYPES
 	***********************************************/

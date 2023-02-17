@@ -117,7 +117,7 @@ namespace ft
 			{
 				nil_ = alloc_node_.allocate(1);
 				alloc_value_.construct(&nil_->value, value_type());
-				nil_->colour = BLACK;
+				nil_->colour = BLACK;	
 				nil_->parent = nil_;
 				nil_->left = nil_;
 				nil_->right = nil_;

@@ -57,7 +57,7 @@ namespace ft
 			template <typename InputIterator>
 			vector(
 				InputIterator first, 
-				typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last, 
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, 
 				const allocator_type& alloc = allocator_type())
 			:alloc_(alloc), start_(mynullptr), finish_(mynullptr), finish_of_storage_(mynullptr)
 			{ assign(first, last);}
@@ -101,7 +101,7 @@ namespace ft
 
 			/*Replaces the contents with copies of those in the range [first, last), and modifying its size accordingly.*/
 			template <typename InputIterator>
-			void assign (InputIterator first, typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last)
+			void assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
 			{ assign_in_range_(first, last, ft::iterator_category(first));}
 
 			/*Returns the allocator associated with the container. */
@@ -269,7 +269,7 @@ namespace ft
 			void insert(
 				 iterator position, 
 				 InputIterator first, 
-				 typename ft::enable_if<!ft::is_integer<InputIterator>::value, InputIterator>::type last)
+				 typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
 			{ insert_range_(position, first, last, ft::iterator_category(first));}
 
 			/*Removes the element at pos*/
