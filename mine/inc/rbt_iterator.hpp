@@ -5,7 +5,6 @@
 #include "mynullptr.hpp"
 #include "algorithm.hpp"
 
-#include <iostream>
 namespace ft
 {
 	template <class NodePointer>

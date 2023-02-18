@@ -72,6 +72,7 @@ namespace ft
 					root_ = tree_copy_(other.root_, nil_, other.nil_);
 					node_count_ = other.node_count_;
 					left_most_ = rbt_leftmost(root_);
+					nil_->parent = rbt_rightmost(root_);
 				}
 				return *this;
 			}
@@ -384,7 +385,7 @@ namespace ft
 				destroy_node_(z);
 				if (original_colour == BLACK)
 					balance_erase_(x);
-				nil_->parent = rbt_rightmost(root_); // muss es eine bessere Lösung geben
+				nil_->parent = rbt_rightmost(root_);
 				--node_count_;
 				return iterator(next);
 			}
@@ -417,7 +418,7 @@ namespace ft
 					left_most_ = left_most_->left;
 				balance_insert_(new_node);
 				++node_count_;
-				if (new_node == rbt_rightmost(root_)) //geht besser
+				if (new_node == rbt_rightmost(root_))
 					nil_->parent = new_node;
 				return ft::make_pair(iterator(new_node), true);
 			}
